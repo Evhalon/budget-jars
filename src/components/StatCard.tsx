@@ -24,7 +24,7 @@ export const StatCard = ({ title, value, icon: Icon, variant = "default", trend 
   };
 
   return (
-    <Card className={cn("border-2 bg-gradient-to-br shadow-md transition-all hover:shadow-lg", variantStyles[variant])}>
+    <Card className={cn("border-2 glass-card shadow-md transition-all", variantStyles[variant])}>
       <CardContent className="p-6">
         <div className="flex items-center justify-between mb-4">
           <p className="text-sm font-medium text-muted-foreground">{title}</p>

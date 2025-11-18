@@ -197,15 +197,15 @@ const Expenses = () => {
   if (!session) return null;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-accent/10">
+    <div className="min-h-screen gradient-mesh-bg">
       <div className="container max-w-6xl mx-auto p-4 md:p-6 space-y-6">
         {/* Header */}
         <div className="flex items-center gap-4">
-          <Link to="/">
-            <Button variant="outline" size="icon">
-              <ArrowLeft className="w-4 h-4" />
-            </Button>
-          </Link>
+            <Link to="/">
+              <Button variant="outline" size="icon" className="glass">
+                <ArrowLeft className="w-4 h-4" />
+              </Button>
+            </Link>
           <div>
             <h1 className="text-3xl md:text-4xl font-bold">Gestione Finanziaria</h1>
             <p className="text-muted-foreground">Traccia entrate e spese</p>
