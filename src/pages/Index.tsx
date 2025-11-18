@@ -3,7 +3,8 @@ import { useNavigate, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { StatCard } from "@/components/StatCard";
-import { TrendingUp, TrendingDown, Wallet, PiggyBank, LogOut, Plus } from "lucide-react";
+import { AISuggestions } from "@/components/AISuggestions";
+import { TrendingUp, TrendingDown, Wallet, PiggyBank, LogOut, Plus, Receipt, Target, TrendingUpIcon } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Session } from "@supabase/supabase-js";
 
@@ -83,7 +84,7 @@ const Index = () => {
   if (!session) return null;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-accent/10">
+    <div className="min-h-screen gradient-mesh-bg">
       <div className="container max-w-6xl mx-auto p-4 md:p-6 space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
@@ -91,7 +92,7 @@ const Index = () => {
             <h1 className="text-3xl md:text-4xl font-bold mb-2">Dashboard</h1>
             <p className="text-muted-foreground">Benvenuto nel tuo budget manager</p>
           </div>
-          <Button variant="outline" size="icon" onClick={handleLogout}>
+          <Button variant="outline" size="icon" onClick={handleLogout} className="glass">
             <LogOut className="w-4 h-4" />
           </Button>
         </div>
@@ -123,37 +124,54 @@ const Index = () => {
             title="Risparmi"
             value={`€${stats.totalSavings.toFixed(2)}`}
             icon={PiggyBank}
-            variant="success"
+            variant="default"
             trend="Negli obiettivi"
           />
         </div>
 
+        {/* AI Suggestions */}
+        <AISuggestions userId={session.user.id} />
+
         {/* Quick Actions */}
-        <div className="grid gap-4 md:grid-cols-2">
+        <div className="grid gap-4 md:grid-cols-3">
           <Link to="/expenses" className="block">
-            <div className="h-full p-6 bg-card rounded-xl border-2 border-border hover:border-primary transition-all hover:shadow-lg cursor-pointer">
-              <div className="flex items-center gap-4">
-                <div className="p-3 bg-primary/10 rounded-xl">
-                  <TrendingDown className="w-6 h-6 text-primary" />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-lg">Gestisci Spese</h3>
-                  <p className="text-sm text-muted-foreground">Aggiungi e visualizza le tue spese</p>
-                </div>
+            <div className="glass-card p-6 text-center space-y-4 cursor-pointer h-full">
+              <div className="p-4 bg-destructive/10 rounded-full inline-block animate-float">
+                <Receipt className="w-8 h-8 text-destructive" />
+              </div>
+              <div>
+                <h3 className="font-semibold mb-1">Gestisci Spese</h3>
+                <p className="text-sm text-muted-foreground">
+                  Traccia entrate e spese
+                </p>
               </div>
             </div>
           </Link>
 
           <Link to="/jars" className="block">
-            <div className="h-full p-6 bg-card rounded-xl border-2 border-border hover:border-success transition-all hover:shadow-lg cursor-pointer">
-              <div className="flex items-center gap-4">
-                <div className="p-3 bg-success/10 rounded-xl">
-                  <PiggyBank className="w-6 h-6 text-success" />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-lg">Obiettivi di Risparmio</h3>
-                  <p className="text-sm text-muted-foreground">Gestisci i tuoi "jars"</p>
-                </div>
+            <div className="glass-card p-6 text-center space-y-4 cursor-pointer h-full">
+              <div className="p-4 bg-success/10 rounded-full inline-block animate-float" style={{ animationDelay: "0.2s" }}>
+                <Target className="w-8 h-8 text-success" />
+              </div>
+              <div>
+                <h3 className="font-semibold mb-1">Obiettivi di Risparmio</h3>
+                <p className="text-sm text-muted-foreground">
+                  I tuoi jars finanziari
+                </p>
+              </div>
+            </div>
+          </Link>
+
+          <Link to="/projections" className="block">
+            <div className="glass-card p-6 text-center space-y-4 cursor-pointer h-full">
+              <div className="p-4 bg-primary/10 rounded-full inline-block animate-float" style={{ animationDelay: "0.4s" }}>
+                <TrendingUpIcon className="w-8 h-8 text-primary" />
+              </div>
+              <div>
+                <h3 className="font-semibold mb-1">Proiezioni</h3>
+                <p className="text-sm text-muted-foreground">
+                  Calcola il futuro
+                </p>
               </div>
             </div>
           </Link>

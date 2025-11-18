@@ -14,6 +14,69 @@ export type Database = {
   }
   public: {
     Tables: {
+      ai_suggestions: {
+        Row: {
+          category: string
+          created_at: string
+          id: string
+          is_read: boolean | null
+          priority: string | null
+          suggestion_text: string
+          user_id: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          id?: string
+          is_read?: boolean | null
+          priority?: string | null
+          suggestion_text: string
+          user_id: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          id?: string
+          is_read?: boolean | null
+          priority?: string | null
+          suggestion_text?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      budget_alerts: {
+        Row: {
+          alert_type: string
+          created_at: string
+          id: string
+          is_read: boolean | null
+          message: string
+          severity: string | null
+          threshold_amount: number | null
+          user_id: string
+        }
+        Insert: {
+          alert_type: string
+          created_at?: string
+          id?: string
+          is_read?: boolean | null
+          message: string
+          severity?: string | null
+          threshold_amount?: number | null
+          user_id: string
+        }
+        Update: {
+          alert_type?: string
+          created_at?: string
+          id?: string
+          is_read?: boolean | null
+          message?: string
+          severity?: string | null
+          threshold_amount?: number | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       expenses: {
         Row: {
           amount: number
@@ -130,6 +193,7 @@ export type Database = {
           created_at: string | null
           current_amount: number | null
           id: string
+          monthly_contribution: number | null
           name: string
           target_amount: number
           user_id: string
@@ -138,6 +202,7 @@ export type Database = {
           created_at?: string | null
           current_amount?: number | null
           id?: string
+          monthly_contribution?: number | null
           name: string
           target_amount: number
           user_id: string
@@ -146,6 +211,7 @@ export type Database = {
           created_at?: string | null
           current_amount?: number | null
           id?: string
+          monthly_contribution?: number | null
           name?: string
           target_amount?: number
           user_id?: string
@@ -175,6 +241,45 @@ export type Database = {
           created_at?: string | null
           full_name?: string | null
           id?: string
+        }
+        Relationships: []
+      }
+      projections: {
+        Row: {
+          created_at: string
+          description: string | null
+          final_amount: number
+          id: string
+          interest_rate: number | null
+          monthly_savings: number
+          months: number
+          name: string
+          starting_amount: number
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          final_amount: number
+          id?: string
+          interest_rate?: number | null
+          monthly_savings: number
+          months: number
+          name: string
+          starting_amount?: number
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          final_amount?: number
+          id?: string
+          interest_rate?: number | null
+          monthly_savings?: number
+          months?: number
+          name?: string
+          starting_amount?: number
+          user_id?: string
         }
         Relationships: []
       }
