@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { StatCard } from "@/components/StatCard";
 import { AISuggestions } from "@/components/AISuggestions";
-import { TrendingUp, TrendingDown, Wallet, PiggyBank, LogOut, Plus, Receipt, Target, TrendingUpIcon } from "lucide-react";
+import { TrendingUp, TrendingDown, Wallet, PiggyBank, LogOut, Plus, Receipt, Target, TrendingUpIcon, Calculator } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Session } from "@supabase/supabase-js";
 
@@ -84,15 +84,17 @@ const Index = () => {
   if (!session) return null;
 
   return (
-    <div className="min-h-screen gradient-mesh-bg">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5">
       <div className="container max-w-6xl mx-auto p-4 md:p-6 space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl md:text-4xl font-bold mb-2">Dashboard</h1>
-            <p className="text-muted-foreground">Benvenuto nel tuo budget manager</p>
+            <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+              Dashboard
+            </h1>
+            <p className="text-muted-foreground mt-1">Benvenuto nel tuo budget manager</p>
           </div>
-          <Button variant="outline" size="icon" onClick={handleLogout} className="glass">
+          <Button variant="outline" size="icon" onClick={handleLogout}>
             <LogOut className="w-4 h-4" />
           </Button>
         </div>
@@ -133,11 +135,11 @@ const Index = () => {
         <AISuggestions userId={session.user.id} />
 
         {/* Quick Actions */}
-        <div className="grid gap-4 md:grid-cols-3">
+        <div className="grid gap-4 md:grid-cols-4">
           <Link to="/expenses" className="block">
-            <div className="glass-card p-6 text-center space-y-4 cursor-pointer h-full">
-              <div className="p-4 bg-destructive/10 rounded-full inline-block animate-float">
-                <Receipt className="w-8 h-8 text-destructive" />
+            <div className="p-6 text-center space-y-4 cursor-pointer h-full rounded-lg border border-border/50 shadow-sm hover:shadow-md hover:border-primary/30 transition-all">
+              <div className="p-4 bg-red-500/10 rounded-full inline-block">
+                <Receipt className="w-8 h-8 text-red-600" />
               </div>
               <div>
                 <h3 className="font-semibold mb-1">Gestisci Spese</h3>
@@ -149,9 +151,9 @@ const Index = () => {
           </Link>
 
           <Link to="/jars" className="block">
-            <div className="glass-card p-6 text-center space-y-4 cursor-pointer h-full">
-              <div className="p-4 bg-success/10 rounded-full inline-block animate-float" style={{ animationDelay: "0.2s" }}>
-                <Target className="w-8 h-8 text-success" />
+            <div className="p-6 text-center space-y-4 cursor-pointer h-full rounded-lg border border-border/50 shadow-sm hover:shadow-md hover:border-primary/30 transition-all">
+              <div className="p-4 bg-green-500/10 rounded-full inline-block">
+                <Target className="w-8 h-8 text-green-600" />
               </div>
               <div>
                 <h3 className="font-semibold mb-1">Obiettivi di Risparmio</h3>
@@ -163,14 +165,28 @@ const Index = () => {
           </Link>
 
           <Link to="/projections" className="block">
-            <div className="glass-card p-6 text-center space-y-4 cursor-pointer h-full">
-              <div className="p-4 bg-primary/10 rounded-full inline-block animate-float" style={{ animationDelay: "0.4s" }}>
+            <div className="p-6 text-center space-y-4 cursor-pointer h-full rounded-lg border border-border/50 shadow-sm hover:shadow-md hover:border-primary/30 transition-all">
+              <div className="p-4 bg-primary/10 rounded-full inline-block">
                 <TrendingUpIcon className="w-8 h-8 text-primary" />
               </div>
               <div>
                 <h3 className="font-semibold mb-1">Proiezioni</h3>
                 <p className="text-sm text-muted-foreground">
                   Calcola il futuro
+                </p>
+              </div>
+            </div>
+          </Link>
+
+          <Link to="/budget" className="block">
+            <div className="p-6 text-center space-y-4 cursor-pointer h-full rounded-lg border border-border/50 shadow-sm hover:shadow-md hover:border-primary/30 transition-all">
+              <div className="p-4 bg-primary/10 rounded-full inline-block">
+                <Calculator className="w-8 h-8 text-primary" />
+              </div>
+              <div>
+                <h3 className="font-semibold mb-1">Budget</h3>
+                <p className="text-sm text-muted-foreground">
+                  Pianifica entrate e uscite
                 </p>
               </div>
             </div>

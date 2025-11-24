@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.81.1";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -12,6 +13,11 @@ serve(async (req) => {
 
   try {
     const { userId } = await req.json();
+    
+    const supabaseClient = createClient(
+      Deno.env.get("SUPABASE_URL") ?? "",
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
+    );
     
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     
@@ -88,6 +94,24 @@ serve(async (req) => {
     const data = await response.json();
     const toolCall = data.choices[0].message.tool_calls?.[0];
     const suggestions = JSON.parse(toolCall.function.arguments).suggestions;
+
+    // Save suggestions to database
+    const suggestionsToInsert = suggestions.map((s: any) => ({
+      user_id: userId,
+      suggestion_text: s.text,
+      category: s.category,
+      priority: s.priority,
+      is_read: false
+    }));
+
+    const { error: insertError } = await supabaseClient
+      .from("ai_suggestions")
+      .insert(suggestionsToInsert);
+
+    if (insertError) {
+      console.error("Error inserting suggestions:", insertError);
+      throw insertError;
+    }
 
     return new Response(JSON.stringify({ suggestions }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },

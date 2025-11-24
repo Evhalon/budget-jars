@@ -89,7 +89,7 @@ export const AISuggestions = ({ userId }: { userId: string }) => {
 
   if (suggestions.length === 0) {
     return (
-      <Card className="glass-card animate-float">
+      <Card className="border-none shadow-sm">
         <CardContent className="p-6 text-center space-y-4">
           <div className="p-4 bg-primary/10 rounded-full inline-block">
             <Sparkles className="w-8 h-8 text-primary" />
@@ -123,11 +123,11 @@ export const AISuggestions = ({ userId }: { userId: string }) => {
   }
 
   return (
-    <Card className="glass-card">
+    <Card className="border-none shadow-sm">
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2">
-            <Sparkles className="w-5 h-5 text-primary animate-pulse-slow" />
+            <Sparkles className="w-5 h-5 text-primary" />
             Suggerimenti AI
           </CardTitle>
           <Button 
@@ -135,7 +135,6 @@ export const AISuggestions = ({ userId }: { userId: string }) => {
             size="sm"
             onClick={generateSuggestions}
             disabled={isLoading}
-            className="glass"
           >
             {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Aggiorna"}
           </Button>
@@ -145,7 +144,7 @@ export const AISuggestions = ({ userId }: { userId: string }) => {
         {suggestions.map((suggestion) => (
           <div 
             key={suggestion.id}
-            className="p-4 glass rounded-lg space-y-2 transition-all hover:scale-[1.02]"
+            className="p-4 bg-muted/50 rounded-lg space-y-2 hover:bg-muted transition-colors"
           >
             <div className="flex items-start justify-between gap-2">
               <div className="flex items-start gap-3 flex-1">
