@@ -30,6 +30,8 @@ serve(async (req) => {
     
     Fornisci suggerimenti specifici, concreti e attuabili. Ogni suggerimento deve essere breve (max 2 frasi) e categorizzato come: risparmio, investimento, o ottimizzazione.`;
 
+    console.log("Calling AI gateway...");
+    
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -75,25 +77,51 @@ serve(async (req) => {
       }),
     });
 
+    console.log("AI gateway response status:", response.status);
+
     if (!response.ok) {
+      const errorText = await response.text();
+      console.error("AI gateway error response:", errorText);
+      
       if (response.status === 429) {
-        return new Response(JSON.stringify({ error: "Rate limit exceeded" }), {
+        return new Response(JSON.stringify({ error: "Limite di richieste superato. Riprova tra qualche minuto." }), {
           status: 429,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
       if (response.status === 402) {
-        return new Response(JSON.stringify({ error: "Payment required" }), {
+        return new Response(JSON.stringify({ error: "Crediti esauriti. Aggiungi crediti per continuare." }), {
           status: 402,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
-      throw new Error("AI gateway error");
+      
+      return new Response(
+        JSON.stringify({ error: `AI gateway error: ${response.status} - ${errorText}` }), 
+        {
+          status: 500,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        }
+      );
     }
 
     const data = await response.json();
-    const toolCall = data.choices[0].message.tool_calls?.[0];
+    console.log("AI response received");
+    
+    if (!data.choices || !data.choices[0] || !data.choices[0].message || !data.choices[0].message.tool_calls) {
+      console.error("Invalid AI response structure:", JSON.stringify(data));
+      return new Response(
+        JSON.stringify({ error: "Risposta AI non valida" }), 
+        {
+          status: 500,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        }
+      );
+    }
+    
+    const toolCall = data.choices[0].message.tool_calls[0];
     const suggestions = JSON.parse(toolCall.function.arguments).suggestions;
+    console.log("Suggestions generated:", suggestions.length);
 
     // Save suggestions to database
     const suggestionsToInsert = suggestions.map((s: any) => ({
