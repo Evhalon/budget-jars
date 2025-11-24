@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus, TrendingUp, TrendingDown, Trash2 } from "lucide-react";
+import { Plus, TrendingUp, TrendingDown, Trash2, ArrowLeft } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface BudgetItem {
@@ -46,6 +47,7 @@ const FREQUENCIES = [
 ];
 
 export default function Budget() {
+  const navigate = useNavigate();
   const [items, setItems] = useState<BudgetItem[]>([]);
   const [userId, setUserId] = useState<string>("");
   const [isAdding, setIsAdding] = useState(false);
@@ -152,11 +154,21 @@ export default function Budget() {
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 p-4 md:p-8">
       <div className="max-w-7xl mx-auto space-y-6">
         <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-              Budget
-            </h1>
-            <p className="text-muted-foreground mt-1">Gestisci entrate e uscite</p>
+          <div className="flex items-center gap-4">
+            <Button 
+              variant="ghost" 
+              size="icon"
+              onClick={() => navigate("/")}
+              className="rounded-full"
+            >
+              <ArrowLeft className="w-5 h-5" />
+            </Button>
+            <div>
+              <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+                Budget
+              </h1>
+              <p className="text-muted-foreground mt-1">Gestisci entrate e uscite</p>
+            </div>
           </div>
           <Button onClick={() => setIsAdding(!isAdding)} className="gap-2">
             <Plus className="w-4 h-4" />
