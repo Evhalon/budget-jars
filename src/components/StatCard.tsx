@@ -11,30 +11,30 @@ interface StatCardProps {
 }
 
 export const StatCard = ({ title, value, icon: Icon, variant = "default", trend }: StatCardProps) => {
-  const variantStyles = {
-    default: "from-primary/10 to-primary/5 border-primary/20",
-    success: "from-success/10 to-success/5 border-success/20",
-    destructive: "from-destructive/10 to-destructive/5 border-destructive/20",
+  const colors = {
+    default: "text-primary",
+    success: "text-green-600",
+    destructive: "text-red-600",
   };
 
-  const iconStyles = {
-    default: "bg-primary/10 text-primary",
-    success: "bg-success/10 text-success",
-    destructive: "bg-destructive/10 text-destructive",
+  const bgColors = {
+    default: "bg-primary/10",
+    success: "bg-green-500/10",
+    destructive: "bg-red-500/10",
   };
 
   return (
-    <Card className={cn("border-2 glass-card shadow-md transition-all", variantStyles[variant])}>
+    <Card className="border-none shadow-sm">
       <CardContent className="p-6">
-        <div className="flex items-center justify-between mb-4">
-          <p className="text-sm font-medium text-muted-foreground">{title}</p>
-          <div className={cn("p-2 rounded-xl", iconStyles[variant])}>
-            <Icon className="w-5 h-5" />
+        <div className="flex items-center gap-4">
+          <div className={cn("p-3 rounded-full", bgColors[variant])}>
+            <Icon className={cn("w-6 h-6", colors[variant])} />
           </div>
-        </div>
-        <div className="space-y-1">
-          <p className="text-3xl font-bold">{value}</p>
-          {trend && <p className="text-xs text-muted-foreground">{trend}</p>}
+          <div className="flex-1">
+            <p className="text-sm text-muted-foreground mb-1">{title}</p>
+            <p className="text-2xl font-bold">{value}</p>
+            {trend && <p className="text-xs text-muted-foreground mt-1">{trend}</p>}
+          </div>
         </div>
       </CardContent>
     </Card>

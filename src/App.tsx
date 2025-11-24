@@ -8,6 +8,7 @@ import Auth from "./pages/Auth";
 import Expenses from "./pages/Expenses";
 import Jars from "./pages/Jars";
 import Projections from "./pages/Projections";
+import Budget from "./pages/Budget";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -24,6 +25,7 @@ const App = () => (
           <Route path="/expenses" element={<Expenses />} />
           <Route path="/jars" element={<Jars />} />
           <Route path="/projections" element={<Projections />} />
+          <Route path="/budget" element={<Budget />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

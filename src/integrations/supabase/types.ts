@@ -77,6 +77,51 @@ export type Database = {
         }
         Relationships: []
       }
+      budget_items: {
+        Row: {
+          amount: number
+          annual_amount: number
+          category: string
+          created_at: string | null
+          description: string
+          frequency: string
+          id: string
+          is_active: boolean | null
+          monthly_amount: number
+          type: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          amount?: number
+          annual_amount?: number
+          category: string
+          created_at?: string | null
+          description: string
+          frequency: string
+          id?: string
+          is_active?: boolean | null
+          monthly_amount?: number
+          type: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          annual_amount?: number
+          category?: string
+          created_at?: string | null
+          description?: string
+          frequency?: string
+          id?: string
+          is_active?: boolean | null
+          monthly_amount?: number
+          type?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       expenses: {
         Row: {
           amount: number
