@@ -51,6 +51,7 @@ export default function Budget() {
   const [items, setItems] = useState<BudgetItem[]>([]);
   const [userId, setUserId] = useState<string>("");
   const [isAdding, setIsAdding] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [newItem, setNewItem] = useState({
     type: "expense" as "income" | "expense",
     category: "",
@@ -74,6 +75,7 @@ export default function Budget() {
   };
 
   const fetchItems = async () => {
+    setLoading(true);
     const { data, error } = await supabase
       .from("budget_items")
       .select("*")
@@ -88,6 +90,7 @@ export default function Budget() {
         type: item.type as "income" | "expense"
       })));
     }
+    setLoading(false);
   };
 
   const calculateAmounts = (amount: number, frequency: string) => {
@@ -149,6 +152,14 @@ export default function Budget() {
   }, { income: 0, expenses: 0 });
 
   const savings = totals.income - totals.expenses;
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background p-4 md:p-8">

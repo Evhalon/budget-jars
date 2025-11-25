@@ -40,6 +40,7 @@ const categories = [
 
 const Expenses = () => {
   const [session, setSession] = useState<Session | null>(null);
+  const [loading, setLoading] = useState(true);
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [incomes, setIncomes] = useState<Income[]>([]);
   const [isExpenseDialogOpen, setIsExpenseDialogOpen] = useState(false);
@@ -67,8 +68,7 @@ const Expenses = () => {
 
   useEffect(() => {
     if (session?.user) {
-      fetchExpenses();
-      fetchIncomes();
+      fetchData();
     }
   }, [session]);
 
@@ -98,6 +98,12 @@ const Expenses = () => {
     if (!error && data) {
       setIncomes(data);
     }
+  };
+
+  const fetchData = async () => {
+    setLoading(true);
+    await Promise.all([fetchExpenses(), fetchIncomes()]);
+    setLoading(false);
   };
 
   const handleAddExpense = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -195,6 +201,14 @@ const Expenses = () => {
   };
 
   if (!session) return null;
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">

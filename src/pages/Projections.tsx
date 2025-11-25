@@ -25,6 +25,7 @@ interface Projection {
 
 const Projections = () => {
   const [session, setSession] = useState<Session | null>(null);
+  const [loading, setLoading] = useState(true);
   const [projections, setProjections] = useState<Projection[]>([]);
   const [isCalculating, setIsCalculating] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -52,6 +53,8 @@ const Projections = () => {
 
   const fetchProjections = async () => {
     if (!session?.user) return;
+    
+    setLoading(true);
 
     const { data, error } = await supabase
       .from("projections")
@@ -60,6 +63,8 @@ const Projections = () => {
       .order("created_at", { ascending: false });
 
     if (!error && data) setProjections(data);
+    
+    setLoading(false);
   };
 
   const handleCalculate = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -151,6 +156,14 @@ const Projections = () => {
   };
 
   if (!session) return null;
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">
