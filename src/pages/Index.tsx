@@ -10,6 +10,7 @@ import { Session } from "@supabase/supabase-js";
 
 const Index = () => {
   const [session, setSession] = useState<Session | null>(null);
+  const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState({
     totalIncome: 0,
     totalExpenses: 0,
@@ -45,6 +46,8 @@ const Index = () => {
 
   const fetchStats = async () => {
     if (!session?.user) return;
+    
+    setLoading(true);
 
     const { data: incomes } = await supabase
       .from("incomes")
@@ -71,6 +74,8 @@ const Index = () => {
       balance: totalIncome - totalExpenses,
       totalSavings,
     });
+    
+    setLoading(false);
   };
 
   const handleLogout = async () => {
@@ -82,6 +87,14 @@ const Index = () => {
   };
 
   if (!session) return null;
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -192,6 +205,19 @@ const Index = () => {
             </div>
           </Link>
         </div>
+
+        {/* Statistics Link */}
+        <Link to="/statistics">
+          <div className="p-6 rounded-lg border border-border/50 shadow-sm hover:shadow-md hover:border-primary/30 transition-all bg-gradient-to-r from-primary/5 to-accent/5">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-xl font-semibold mb-1">Visualizza Statistiche</h3>
+                <p className="text-sm text-muted-foreground">Analizza i tuoi dati finanziari con grafici dettagliati</p>
+              </div>
+              <TrendingUpIcon className="w-12 h-12 text-primary" />
+            </div>
+          </div>
+        </Link>
       </div>
     </div>
   );

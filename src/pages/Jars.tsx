@@ -21,6 +21,7 @@ interface Jar {
 
 const Jars = () => {
   const [session, setSession] = useState<Session | null>(null);
+  const [loading, setLoading] = useState(true);
   const [jars, setJars] = useState<Jar[]>([]);
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [isDepositDialogOpen, setIsDepositDialogOpen] = useState(false);
@@ -54,6 +55,8 @@ const Jars = () => {
 
   const fetchJars = async () => {
     if (!session?.user) return;
+    
+    setLoading(true);
 
     const { data, error } = await supabase
       .from("jars")
@@ -64,6 +67,8 @@ const Jars = () => {
     if (!error && data) {
       setJars(data);
     }
+    
+    setLoading(false);
   };
 
   const handleCreateJar = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -157,6 +162,14 @@ const Jars = () => {
   };
 
   if (!session) return null;
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">
