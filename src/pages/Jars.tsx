@@ -159,13 +159,13 @@ const Jars = () => {
   if (!session) return null;
 
   return (
-    <div className="min-h-screen gradient-mesh-bg">
+    <div className="min-h-screen bg-background">
       <div className="container max-w-6xl mx-auto p-4 md:p-6 space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Link to="/">
-              <Button variant="outline" size="icon" className="glass">
+              <Button variant="outline" size="icon" className="rounded-full">
                 <ArrowLeft className="w-4 h-4" />
               </Button>
             </Link>
@@ -176,12 +176,12 @@ const Jars = () => {
           </div>
           <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
             <DialogTrigger asChild>
-              <Button className="gap-2 glass">
+              <Button className="gap-2">
                 <Plus className="w-4 h-4" />
                 Nuovo Jar
               </Button>
             </DialogTrigger>
-            <DialogContent className="glass">
+            <DialogContent>
               <DialogHeader>
                 <DialogTitle>Crea Nuovo Obiettivo</DialogTitle>
               </DialogHeader>
@@ -215,9 +215,9 @@ const Jars = () => {
 
         {/* Jars Grid */}
         {jars.length === 0 ? (
-          <Card className="p-12 text-center glass-card">
+          <Card className="p-12 text-center">
             <div className="flex flex-col items-center gap-4">
-              <div className="p-6 bg-success/10 rounded-full animate-float">
+              <div className="p-6 bg-success/10 rounded-full">
                 <PiggyBank className="w-12 h-12 text-success" />
               </div>
               <div>
@@ -239,8 +239,8 @@ const Jars = () => {
               const isCompleted = progress >= 100;
 
               return (
-                <Card key={jar.id} className="overflow-hidden border-2 hover:border-success/50 transition-all glass-card">
-                  <CardHeader className="bg-gradient-to-br from-success/10 to-success/5 pb-4">
+                <Card key={jar.id} className="overflow-hidden hover:border-success/50 transition-all">
+                  <CardHeader className="bg-success/5 pb-4">
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
                         <CardTitle className="text-xl mb-2">{jar.name}</CardTitle>
@@ -310,7 +310,7 @@ const Jars = () => {
           setIsDepositDialogOpen(open);
           if (!open) setSelectedJar(null);
         }}>
-          <DialogContent className="glass">
+          <DialogContent>
             <DialogHeader>
               <DialogTitle>Aggiungi Fondi</DialogTitle>
             </DialogHeader>

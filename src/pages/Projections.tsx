@@ -153,13 +153,13 @@ const Projections = () => {
   if (!session) return null;
 
   return (
-    <div className="min-h-screen gradient-mesh-bg">
+    <div className="min-h-screen bg-background">
       <div className="container max-w-6xl mx-auto p-4 md:p-6 space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Link to="/">
-              <Button variant="outline" size="icon" className="glass">
+              <Button variant="outline" size="icon" className="rounded-full">
                 <ArrowLeft className="w-4 h-4" />
               </Button>
             </Link>
@@ -170,12 +170,12 @@ const Projections = () => {
           </div>
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
-              <Button className="gap-2 glass">
+              <Button className="gap-2">
                 <Calculator className="w-4 h-4" />
                 Nuova Proiezione
               </Button>
             </DialogTrigger>
-            <DialogContent className="glass max-w-2xl">
+            <DialogContent className="max-w-2xl">
               <DialogHeader>
                 <DialogTitle>Calcola Proiezione Finanziaria</DialogTitle>
               </DialogHeader>
@@ -233,7 +233,7 @@ const Projections = () => {
                 </Button>
 
                 {result && (
-                  <div className="mt-6 space-y-4 p-4 glass rounded-lg">
+                  <div className="mt-6 space-y-4 p-4 border rounded-lg bg-muted/30">
                     <div className="grid grid-cols-3 gap-4 text-center">
                       <div>
                         <p className="text-sm text-muted-foreground">Importo Finale</p>
@@ -254,7 +254,7 @@ const Projections = () => {
                       <Textarea
                         value={result.analysis}
                         readOnly
-                        className="min-h-[200px] glass"
+                        className="min-h-[200px]"
                       />
                     </div>
 
@@ -271,9 +271,9 @@ const Projections = () => {
 
         {/* Projections Grid */}
         {projections.length === 0 ? (
-          <Card className="p-12 text-center glass-card">
+          <Card className="p-12 text-center">
             <div className="flex flex-col items-center gap-4">
-              <div className="p-6 bg-primary/10 rounded-full animate-float">
+              <div className="p-6 bg-primary/10 rounded-full">
                 <TrendingUp className="w-12 h-12 text-primary" />
               </div>
               <div>
@@ -291,7 +291,7 @@ const Projections = () => {
         ) : (
           <div className="grid gap-6 md:grid-cols-2">
             {projections.map((projection) => (
-              <Card key={projection.id} className="glass-card">
+              <Card key={projection.id}>
                 <CardHeader>
                   <div className="flex items-start justify-between">
                     <div>

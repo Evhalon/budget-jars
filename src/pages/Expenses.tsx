@@ -197,12 +197,12 @@ const Expenses = () => {
   if (!session) return null;
 
   return (
-    <div className="min-h-screen gradient-mesh-bg">
+    <div className="min-h-screen bg-background">
       <div className="container max-w-6xl mx-auto p-4 md:p-6 space-y-6">
         {/* Header */}
         <div className="flex items-center gap-4">
             <Link to="/">
-              <Button variant="outline" size="icon" className="glass">
+              <Button variant="outline" size="icon" className="rounded-full">
                 <ArrowLeft className="w-4 h-4" />
               </Button>
             </Link>
