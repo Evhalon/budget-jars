@@ -12,6 +12,8 @@ import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, Plus, Trash2, TrendingDown } from "lucide-react";
 import { Session } from "@supabase/supabase-js";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { Pencil } from "lucide-react";
 
 interface Expense {
   id: string;
@@ -40,12 +42,15 @@ const categories = [
 ];
 
 const Expenses = () => {
+  const { t } = useLanguage();
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [incomes, setIncomes] = useState<Income[]>([]);
   const [isExpenseDialogOpen, setIsExpenseDialogOpen] = useState(false);
   const [isIncomeDialogOpen, setIsIncomeDialogOpen] = useState(false);
+  const [editingExpense, setEditingExpense] = useState<Expense | null>(null);
+  const [editingIncome, setEditingIncome] = useState<Income | null>(null);
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -137,6 +142,50 @@ const Expenses = () => {
     }
   };
 
+  const handleEditExpense = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!session?.user || !editingExpense) return;
+
+    const formData = new FormData(e.currentTarget);
+    const { error } = await supabase.from("expenses").update({
+      amount: Number(formData.get("amount")),
+      description: formData.get("description") as string,
+      category: formData.get("category") as string,
+      is_recurring: formData.get("is_recurring") === "on",
+      date: formData.get("date") as string,
+    }).eq("id", editingExpense.id);
+
+    if (error) {
+      toast({ variant: "destructive", title: t('error'), description: error.message });
+    } else {
+      toast({ title: t('saved'), description: t('success') });
+      setIsExpenseDialogOpen(false);
+      setEditingExpense(null);
+      fetchExpenses();
+    }
+  };
+
+  const handleEditIncome = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!session?.user || !editingIncome) return;
+
+    const formData = new FormData(e.currentTarget);
+    const { error } = await supabase.from("incomes").update({
+      amount: Number(formData.get("amount")),
+      description: formData.get("description") as string,
+      date: formData.get("date") as string,
+    }).eq("id", editingIncome.id);
+
+    if (error) {
+      toast({ variant: "destructive", title: t('error'), description: error.message });
+    } else {
+      toast({ title: t('saved'), description: t('success') });
+      setIsIncomeDialogOpen(false);
+      setEditingIncome(null);
+      fetchIncomes();
+    }
+  };
+
   const handleAddIncome = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!session?.user) return;
@@ -163,6 +212,16 @@ const Expenses = () => {
       setIsIncomeDialogOpen(false);
       fetchIncomes();
     }
+  };
+
+  const openEditExpense = (expense: Expense) => {
+    setEditingExpense(expense);
+    setIsExpenseDialogOpen(true);
+  };
+
+  const openEditIncome = (income: Income) => {
+    setEditingIncome(income);
+    setIsIncomeDialogOpen(true);
   };
 
   const handleDeleteExpense = async (id: string) => {
@@ -223,8 +282,8 @@ const Expenses = () => {
               </Button>
             </Link>
             <div>
-              <h1 className="text-3xl md:text-4xl font-bold">Gestione Finanziaria</h1>
-              <p className="text-muted-foreground">Traccia entrate e spese</p>
+              <h1 className="text-3xl md:text-4xl font-bold">{t('appName')}</h1>
+              <p className="text-muted-foreground">{t('welcomeMessage')}</p>
             </div>
           </div>
           <ThemeToggle />
@@ -233,21 +292,24 @@ const Expenses = () => {
         {/* Income Section */}
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle className="text-xl">Entrate</CardTitle>
-            <Dialog open={isIncomeDialogOpen} onOpenChange={setIsIncomeDialogOpen}>
+            <CardTitle className="text-xl">{t('income')}</CardTitle>
+            <Dialog open={isIncomeDialogOpen} onOpenChange={(open) => {
+              setIsIncomeDialogOpen(open);
+              if (!open) setEditingIncome(null);
+            }}>
               <DialogTrigger asChild>
                 <Button size="sm" className="gap-2">
                   <Plus className="w-4 h-4" />
-                  Aggiungi Entrata
+                  {t('addIncome')}
                 </Button>
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
-                  <DialogTitle>Nuova Entrata</DialogTitle>
+                  <DialogTitle>{editingIncome ? t('editIncome') : t('addIncome')}</DialogTitle>
                 </DialogHeader>
-                <form onSubmit={handleAddIncome} className="space-y-4">
+                <form onSubmit={editingIncome ? handleEditIncome : handleAddIncome} className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="income-amount">Importo (€)</Label>
+                    <Label htmlFor="income-amount">{t('amount')} (€)</Label>
                     <Input
                       id="income-amount"
                       name="amount"
@@ -255,27 +317,29 @@ const Expenses = () => {
                       step="0.01"
                       min="0"
                       required
+                      defaultValue={editingIncome?.amount}
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="income-description">Descrizione</Label>
+                    <Label htmlFor="income-description">{t('description')}</Label>
                     <Input
                       id="income-description"
                       name="description"
                       placeholder="es. Stipendio mensile"
+                      defaultValue={editingIncome?.description}
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="income-date">Data</Label>
+                    <Label htmlFor="income-date">{t('date')}</Label>
                     <Input
                       id="income-date"
                       name="date"
                       type="date"
-                      defaultValue={new Date().toISOString().split("T")[0]}
+                      defaultValue={editingIncome?.date || new Date().toISOString().split("T")[0]}
                       required
                     />
                   </div>
-                  <Button type="submit" className="w-full">Salva Entrata</Button>
+                  <Button type="submit" className="w-full">{t('save')}</Button>
                 </form>
               </DialogContent>
             </Dialog>
@@ -299,13 +363,22 @@ const Expenses = () => {
                       )}
                       <p className="text-xs text-muted-foreground">{income.date}</p>
                     </div>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => handleDeleteIncome(income.id)}
-                    >
-                      <Trash2 className="w-4 h-4 text-destructive" />
-                    </Button>
+                    <div className="flex items-center gap-1">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => openEditIncome(income)}
+                      >
+                        <Pencil className="w-4 h-4 text-primary" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleDeleteIncome(income.id)}
+                      >
+                        <Trash2 className="w-4 h-4 text-destructive" />
+                      </Button>
+                    </div>
                   </div>
                 ))
               )}
@@ -316,21 +389,24 @@ const Expenses = () => {
         {/* Expense Section */}
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle className="text-xl">Spese</CardTitle>
-            <Dialog open={isExpenseDialogOpen} onOpenChange={setIsExpenseDialogOpen}>
+            <CardTitle className="text-xl">{t('expense')}</CardTitle>
+            <Dialog open={isExpenseDialogOpen} onOpenChange={(open) => {
+              setIsExpenseDialogOpen(open);
+              if (!open) setEditingExpense(null);
+            }}>
               <DialogTrigger asChild>
                 <Button size="sm" variant="destructive" className="gap-2">
                   <Plus className="w-4 h-4" />
-                  Aggiungi Spesa
+                  {t('addExpense')}
                 </Button>
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
-                  <DialogTitle>Nuova Spesa</DialogTitle>
+                  <DialogTitle>{editingExpense ? t('editExpense') : t('addExpense')}</DialogTitle>
                 </DialogHeader>
-                <form onSubmit={handleAddExpense} className="space-y-4">
+                <form onSubmit={editingExpense ? handleEditExpense : handleAddExpense} className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="expense-amount">Importo (€)</Label>
+                    <Label htmlFor="expense-amount">{t('amount')} (€)</Label>
                     <Input
                       id="expense-amount"
                       name="amount"
@@ -338,22 +414,24 @@ const Expenses = () => {
                       step="0.01"
                       min="0"
                       required
+                      defaultValue={editingExpense?.amount}
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="expense-description">Descrizione</Label>
+                    <Label htmlFor="expense-description">{t('description')}</Label>
                     <Input
                       id="expense-description"
                       name="description"
                       placeholder="es. Spesa al supermercato"
                       required
+                      defaultValue={editingExpense?.description}
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="expense-category">Categoria</Label>
-                    <Select name="category" required>
+                    <Label htmlFor="expense-category">{t('category')}</Label>
+                    <Select name="category" required defaultValue={editingExpense?.category}>
                       <SelectTrigger id="expense-category">
-                        <SelectValue placeholder="Seleziona categoria" />
+                        <SelectValue placeholder={t('category')} />
                       </SelectTrigger>
                       <SelectContent>
                         {categories.map((cat) => (
@@ -365,20 +443,20 @@ const Expenses = () => {
                     </Select>
                   </div>
                   <div className="flex items-center space-x-2">
-                    <Switch id="is-recurring" name="is_recurring" />
-                    <Label htmlFor="is-recurring">Spesa ricorrente</Label>
+                    <Switch id="is-recurring" name="is_recurring" defaultChecked={editingExpense?.is_recurring} />
+                    <Label htmlFor="is-recurring">{t('recurring')}</Label>
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="expense-date">Data</Label>
+                    <Label htmlFor="expense-date">{t('date')}</Label>
                     <Input
                       id="expense-date"
                       name="date"
                       type="date"
-                      defaultValue={new Date().toISOString().split("T")[0]}
+                      defaultValue={editingExpense?.date || new Date().toISOString().split("T")[0]}
                       required
                     />
                   </div>
-                  <Button type="submit" className="w-full">Salva Spesa</Button>
+                  <Button type="submit" className="w-full">{t('save')}</Button>
                 </form>
               </DialogContent>
             </Dialog>
@@ -410,13 +488,22 @@ const Expenses = () => {
                       <p className="text-sm text-muted-foreground">{expense.description}</p>
                       <p className="text-xs text-muted-foreground">{expense.date}</p>
                     </div>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => handleDeleteExpense(expense.id)}
-                    >
-                      <Trash2 className="w-4 h-4 text-destructive" />
-                    </Button>
+                    <div className="flex items-center gap-1">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => openEditExpense(expense)}
+                      >
+                        <Pencil className="w-4 h-4 text-primary" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleDeleteExpense(expense.id)}
+                      >
+                        <Trash2 className="w-4 h-4 text-destructive" />
+                      </Button>
+                    </div>
                   </div>
                 ))
               )}

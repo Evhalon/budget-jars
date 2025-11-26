@@ -18,6 +18,7 @@ const Index = () => {
     balance: 0,
     totalSavings: 0,
   });
+  const [isInstalled, setIsInstalled] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -43,11 +44,16 @@ const Index = () => {
     if (session?.user) {
       fetchStats();
     }
+
+    // Check if app is installed
+    if (window.matchMedia('(display-mode: standalone)').matches) {
+      setIsInstalled(true);
+    }
   }, [session]);
 
   const fetchStats = async () => {
     if (!session?.user) return;
-    
+
     setLoading(true);
 
     const { data: incomes } = await supabase
@@ -75,7 +81,7 @@ const Index = () => {
       balance: totalIncome - totalExpenses,
       totalSavings,
     });
-    
+
     setLoading(false);
   };
 
@@ -181,19 +187,7 @@ const Index = () => {
             </div>
           </Link>
 
-          <Link to="/projections" className="block">
-            <div className="p-6 text-center space-y-4 cursor-pointer h-full rounded-lg border border-border/50 shadow-sm hover:shadow-md hover:border-primary/30 transition-all">
-              <div className="p-4 bg-primary/10 rounded-full inline-block">
-                <TrendingUpIcon className="w-8 h-8 text-primary" />
-              </div>
-              <div>
-                <h3 className="font-semibold mb-1">Proiezioni</h3>
-                <p className="text-sm text-muted-foreground">
-                  Calcola il futuro
-                </p>
-              </div>
-            </div>
-          </Link>
+
 
           <Link to="/budget" className="block">
             <div className="p-6 text-center space-y-4 cursor-pointer h-full rounded-lg border border-border/50 shadow-sm hover:shadow-md hover:border-primary/30 transition-all">
@@ -211,19 +205,21 @@ const Index = () => {
         </div>
 
         {/* Install App Banner */}
-        <Link to="/install">
-          <div className="p-6 rounded-lg border border-primary/30 shadow-sm hover:shadow-md transition-all bg-gradient-to-r from-cyan-500/10 to-blue-500/10">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="text-xl font-semibold mb-1 flex items-center gap-2">
-                  <Smartphone className="w-6 h-6" />
-                  Installa l'App
-                </h3>
-                <p className="text-sm text-muted-foreground">Aggiungi Budget Manager alla tua schermata home per un accesso rapido</p>
+        {!isInstalled && (
+          <Link to="/install">
+            <div className="p-6 rounded-lg border border-primary/30 shadow-sm hover:shadow-md transition-all bg-gradient-to-r from-cyan-500/10 to-blue-500/10">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-xl font-semibold mb-1 flex items-center gap-2">
+                    <Smartphone className="w-6 h-6" />
+                    Installa l'App
+                  </h3>
+                  <p className="text-sm text-muted-foreground">Aggiungi Budget Manager alla tua schermata home per un accesso rapido</p>
+                </div>
               </div>
             </div>
-          </div>
-        </Link>
+          </Link>
+        )}
 
         {/* Statistics Link */}
         <Link to="/statistics">

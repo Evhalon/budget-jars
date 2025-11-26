@@ -8,6 +8,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Plus, TrendingUp, TrendingDown, Trash2, ArrowLeft } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { Pencil } from "lucide-react";
 
 interface BudgetItem {
   id: string;
@@ -48,6 +50,7 @@ const FREQUENCIES = [
 ];
 
 export default function Budget() {
+  const { t } = useLanguage();
   const navigate = useNavigate();
   const [items, setItems] = useState<BudgetItem[]>([]);
   const [userId, setUserId] = useState<string>("");
@@ -60,6 +63,7 @@ export default function Budget() {
     amount: "",
     frequency: "monthly"
   });
+  const [editingItem, setEditingItem] = useState<BudgetItem | null>(null);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -131,6 +135,48 @@ export default function Budget() {
     }
   };
 
+  const handleEditItem = async () => {
+    if (!newItem.description || !newItem.amount || !newItem.category || !editingItem) {
+      toast({ variant: "destructive", title: t('fillAllFields') });
+      return;
+    }
+
+    const amount = parseFloat(newItem.amount);
+    const { monthlyAmount, annualAmount } = calculateAmounts(amount, newItem.frequency);
+
+    const { error } = await supabase.from("budget_items").update({
+      type: newItem.type,
+      category: newItem.category,
+      description: newItem.description,
+      amount,
+      frequency: newItem.frequency,
+      monthly_amount: monthlyAmount,
+      annual_amount: annualAmount
+    }).eq("id", editingItem.id);
+
+    if (error) {
+      toast({ variant: "destructive", title: t('error') });
+    } else {
+      toast({ title: t('saved') });
+      setNewItem({ type: "expense", category: "", description: "", amount: "", frequency: "monthly" });
+      setIsAdding(false);
+      setEditingItem(null);
+      fetchItems();
+    }
+  };
+
+  const openEdit = (item: BudgetItem) => {
+    setEditingItem(item);
+    setNewItem({
+      type: item.type,
+      category: item.category,
+      description: item.description,
+      amount: item.amount.toString(),
+      frequency: item.frequency
+    });
+    setIsAdding(true);
+  };
+
   const deleteItem = async (id: string) => {
     const { error } = await supabase
       .from("budget_items")
@@ -167,8 +213,8 @@ export default function Budget() {
       <div className="max-w-7xl mx-auto space-y-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <Button 
-              variant="ghost" 
+            <Button
+              variant="ghost"
               size="icon"
               onClick={() => navigate("/")}
               className="rounded-full"
@@ -177,16 +223,20 @@ export default function Budget() {
             </Button>
             <div>
               <h1 className="text-3xl md:text-4xl font-bold text-foreground">
-                Budget
+                {t('budget')}
               </h1>
-              <p className="text-muted-foreground mt-1">Gestisci entrate e uscite</p>
+              <p className="text-muted-foreground mt-1">{t('welcomeMessage')}</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
             <ThemeToggle />
-            <Button onClick={() => setIsAdding(!isAdding)} className="gap-2">
+            <Button onClick={() => {
+              setEditingItem(null);
+              setNewItem({ type: "expense", category: "", description: "", amount: "", frequency: "monthly" });
+              setIsAdding(!isAdding);
+            }} className="gap-2">
               <Plus className="w-4 h-4" />
-              Aggiungi
+              {t('add')}
             </Button>
           </div>
         </div>
@@ -200,7 +250,7 @@ export default function Budget() {
                   <TrendingUp className="w-6 h-6 text-green-500" />
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Entrate Mensili</p>
+                  <p className="text-sm text-muted-foreground">{t('totalIncome')}</p>
                   <p className="text-2xl font-bold">€{totals.income.toFixed(2)}</p>
                 </div>
               </div>
@@ -214,7 +264,7 @@ export default function Budget() {
                   <TrendingDown className="w-6 h-6 text-red-500" />
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Uscite Mensili</p>
+                  <p className="text-sm text-muted-foreground">{t('totalExpenses')}</p>
                   <p className="text-2xl font-bold">€{totals.expenses.toFixed(2)}</p>
                 </div>
               </div>
@@ -228,7 +278,7 @@ export default function Budget() {
                   <TrendingUp className={`w-6 h-6 ${savings >= 0 ? 'text-green-500' : 'text-red-500'}`} />
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Risparmio</p>
+                  <p className="text-sm text-muted-foreground">{t('savings')}</p>
                   <p className={`text-2xl font-bold ${savings >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                     €{Math.abs(savings).toFixed(2)}
                   </p>
@@ -242,7 +292,7 @@ export default function Budget() {
         {isAdding && (
           <Card className="border-none shadow-lg">
             <CardHeader>
-              <CardTitle>Nuova Voce</CardTitle>
+              <CardTitle>{editingItem ? t('editItem') : t('newItem')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -251,14 +301,14 @@ export default function Budget() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="income">Entrata</SelectItem>
-                    <SelectItem value="expense">Uscita</SelectItem>
+                    <SelectItem value="income">{t('income')}</SelectItem>
+                    <SelectItem value="expense">{t('expense')}</SelectItem>
                   </SelectContent>
                 </Select>
 
                 <Select value={newItem.category} onValueChange={(v) => setNewItem({ ...newItem, category: v })}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Categoria" />
+                    <SelectValue placeholder={t('category')} />
                   </SelectTrigger>
                   <SelectContent>
                     {(newItem.type === "income" ? INCOME_CATEGORIES : EXPENSE_CATEGORIES).map(cat => (
@@ -268,14 +318,14 @@ export default function Budget() {
                 </Select>
 
                 <Input
-                  placeholder="Descrizione"
+                  placeholder={t('description')}
                   value={newItem.description}
                   onChange={(e) => setNewItem({ ...newItem, description: e.target.value })}
                 />
 
                 <Input
                   type="number"
-                  placeholder="Importo"
+                  placeholder={t('amount')}
                   value={newItem.amount}
                   onChange={(e) => setNewItem({ ...newItem, amount: e.target.value })}
                 />
@@ -293,8 +343,8 @@ export default function Budget() {
               </div>
 
               <div className="flex gap-2">
-                <Button onClick={addItem} className="flex-1">Salva</Button>
-                <Button variant="outline" onClick={() => setIsAdding(false)} className="flex-1">Annulla</Button>
+                <Button onClick={editingItem ? handleEditItem : addItem} className="flex-1">{t('save')}</Button>
+                <Button variant="outline" onClick={() => setIsAdding(false)} className="flex-1">{t('cancel')}</Button>
               </div>
             </CardContent>
           </Card>
@@ -307,7 +357,7 @@ export default function Budget() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-green-600">
                 <TrendingUp className="w-5 h-5" />
-                Entrate
+                {t('income')}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-2">
@@ -320,8 +370,11 @@ export default function Budget() {
                   <div className="flex items-center gap-2">
                     <div className="text-right">
                       <p className="font-semibold">€{item.monthly_amount.toFixed(2)}</p>
-                      <p className="text-xs text-muted-foreground">/mese</p>
+                      <p className="text-xs text-muted-foreground">/{t('monthly')}</p>
                     </div>
+                    <Button variant="ghost" size="icon" onClick={() => openEdit(item)}>
+                      <Pencil className="w-4 h-4" />
+                    </Button>
                     <Button variant="ghost" size="icon" onClick={() => deleteItem(item.id)}>
                       <Trash2 className="w-4 h-4" />
                     </Button>
@@ -329,7 +382,7 @@ export default function Budget() {
                 </div>
               ))}
               {items.filter(i => i.type === "income").length === 0 && (
-                <p className="text-center text-muted-foreground py-8">Nessuna entrata</p>
+                <p className="text-center text-muted-foreground py-8">{t('noIncomes')}</p>
               )}
             </CardContent>
           </Card>
@@ -339,7 +392,7 @@ export default function Budget() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-red-600">
                 <TrendingDown className="w-5 h-5" />
-                Uscite
+                {t('expense')}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-2">
@@ -352,8 +405,11 @@ export default function Budget() {
                   <div className="flex items-center gap-2">
                     <div className="text-right">
                       <p className="font-semibold">€{item.monthly_amount.toFixed(2)}</p>
-                      <p className="text-xs text-muted-foreground">/mese</p>
+                      <p className="text-xs text-muted-foreground">/{t('monthly')}</p>
                     </div>
+                    <Button variant="ghost" size="icon" onClick={() => openEdit(item)}>
+                      <Pencil className="w-4 h-4" />
+                    </Button>
                     <Button variant="ghost" size="icon" onClick={() => deleteItem(item.id)}>
                       <Trash2 className="w-4 h-4" />
                     </Button>
@@ -361,7 +417,7 @@ export default function Budget() {
                 </div>
               ))}
               {items.filter(i => i.type === "expense").length === 0 && (
-                <p className="text-center text-muted-foreground py-8">Nessuna uscita</p>
+                <p className="text-center text-muted-foreground py-8">{t('noExpenses')}</p>
               )}
             </CardContent>
           </Card>

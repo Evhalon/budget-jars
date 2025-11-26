@@ -11,6 +11,8 @@ import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, Plus, Trash2, PiggyBank, TrendingUp } from "lucide-react";
 import { Session } from "@supabase/supabase-js";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { Pencil } from "lucide-react";
 
 interface Jar {
   id: string;
@@ -21,12 +23,15 @@ interface Jar {
 }
 
 const Jars = () => {
+  const { t } = useLanguage();
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const [jars, setJars] = useState<Jar[]>([]);
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [isDepositDialogOpen, setIsDepositDialogOpen] = useState(false);
+  const [isDepositDialogOpen, setIsDepositDialogOpen] = useState(false);
   const [selectedJar, setSelectedJar] = useState<Jar | null>(null);
+  const [editingJar, setEditingJar] = useState<Jar | null>(null);
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -56,7 +61,7 @@ const Jars = () => {
 
   const fetchJars = async () => {
     if (!session?.user) return;
-    
+
     setLoading(true);
 
     const { data, error } = await supabase
@@ -68,7 +73,7 @@ const Jars = () => {
     if (!error && data) {
       setJars(data);
     }
-    
+
     setLoading(false);
   };
 
@@ -96,6 +101,26 @@ const Jars = () => {
         description: "Il tuo jar è stato creato con successo.",
       });
       setIsCreateDialogOpen(false);
+      fetchJars();
+    }
+  };
+
+  const handleEditJar = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!session?.user || !editingJar) return;
+
+    const formData = new FormData(e.currentTarget);
+    const { error } = await supabase.from("jars").update({
+      name: formData.get("name") as string,
+      target_amount: Number(formData.get("target_amount")),
+    }).eq("id", editingJar.id);
+
+    if (error) {
+      toast({ variant: "destructive", title: t('error'), description: error.message });
+    } else {
+      toast({ title: t('saved'), description: t('success') });
+      setIsCreateDialogOpen(false);
+      setEditingJar(null);
       fetchJars();
     }
   };
@@ -162,6 +187,11 @@ const Jars = () => {
     setIsDepositDialogOpen(true);
   };
 
+  const openEditJar = (jar: Jar) => {
+    setEditingJar(jar);
+    setIsCreateDialogOpen(true);
+  };
+
   if (!session) return null;
 
   if (loading) {
@@ -184,49 +214,54 @@ const Jars = () => {
               </Button>
             </Link>
             <div>
-              <h1 className="text-3xl md:text-4xl font-bold">Obiettivi di Risparmio</h1>
-              <p className="text-muted-foreground">I tuoi "jars" per raggiungere i tuoi sogni</p>
+              <h1 className="text-3xl md:text-4xl font-bold">{t('jars')}</h1>
+              <p className="text-muted-foreground">{t('welcomeMessage')}</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
             <ThemeToggle />
-            <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
+            <Dialog open={isCreateDialogOpen} onOpenChange={(open) => {
+              setIsCreateDialogOpen(open);
+              if (!open) setEditingJar(null);
+            }}>
               <DialogTrigger asChild>
                 <Button className="gap-2">
                   <Plus className="w-4 h-4" />
-                  Nuovo Jar
+                  {t('newJar')}
                 </Button>
               </DialogTrigger>
               <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Crea Nuovo Obiettivo</DialogTitle>
-              </DialogHeader>
-              <form onSubmit={handleCreateJar} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="jar-name">Nome Obiettivo</Label>
-                  <Input
-                    id="jar-name"
-                    name="name"
-                    placeholder="es. Viaggio a Parigi"
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="jar-target">Importo Target (€)</Label>
-                  <Input
-                    id="jar-target"
-                    name="target_amount"
-                    type="number"
-                    step="0.01"
-                    min="0"
-                    placeholder="4000.00"
-                    required
-                  />
-                </div>
-                <Button type="submit" className="w-full">Crea Obiettivo</Button>
-              </form>
-            </DialogContent>
-          </Dialog>
+                <DialogHeader>
+                  <DialogTitle>{editingJar ? t('editJar') : t('createJar')}</DialogTitle>
+                </DialogHeader>
+                <form onSubmit={editingJar ? handleEditJar : handleCreateJar} className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="jar-name">{t('jarName')}</Label>
+                    <Input
+                      id="jar-name"
+                      name="name"
+                      placeholder="es. Viaggio a Parigi"
+                      required
+                      defaultValue={editingJar?.name}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="jar-target">{t('targetAmount')} (€)</Label>
+                    <Input
+                      id="jar-target"
+                      name="target_amount"
+                      type="number"
+                      step="0.01"
+                      min="0"
+                      placeholder="4000.00"
+                      required
+                      defaultValue={editingJar?.target_amount}
+                    />
+                  </div>
+                  <Button type="submit" className="w-full">{t('save')}</Button>
+                </form>
+              </DialogContent>
+            </Dialog>
           </div>
         </div>
 
@@ -238,13 +273,13 @@ const Jars = () => {
                 <PiggyBank className="w-12 h-12 text-success" />
               </div>
               <div>
-                <h3 className="text-xl font-semibold mb-2">Nessun obiettivo ancora</h3>
+                <h3 className="text-xl font-semibold mb-2">{t('noJars')}</h3>
                 <p className="text-muted-foreground mb-4">
-                  Crea il tuo primo jar per iniziare a risparmiare!
+                  {t('welcomeMessage')}
                 </p>
                 <Button onClick={() => setIsCreateDialogOpen(true)} className="gap-2">
                   <Plus className="w-4 h-4" />
-                  Crea il tuo primo Jar
+                  {t('createJar')}
                 </Button>
               </div>
             </div>
@@ -264,23 +299,32 @@ const Jars = () => {
                         {isCompleted && (
                           <span className="inline-flex items-center gap-1 px-2 py-1 bg-success text-success-foreground rounded-full text-xs font-medium">
                             <TrendingUp className="w-3 h-3" />
-                            Obiettivo raggiunto!
+                            {t('goalReached')}
                           </span>
                         )}
                       </div>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => handleDeleteJar(jar.id)}
-                      >
-                        <Trash2 className="w-4 h-4 text-destructive" />
-                      </Button>
+                      <div className="flex gap-1">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => openEditJar(jar)}
+                        >
+                          <Pencil className="w-4 h-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleDeleteJar(jar.id)}
+                        >
+                          <Trash2 className="w-4 h-4 text-destructive" />
+                        </Button>
+                      </div>
                     </div>
                   </CardHeader>
                   <CardContent className="pt-6 space-y-4">
                     <div className="space-y-2">
                       <div className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">Progresso</span>
+                        <span className="text-muted-foreground">{t('progress')}</span>
                         <span className="font-medium">{progress.toFixed(1)}%</span>
                       </div>
                       <Progress value={progress} className="h-3" />
@@ -288,19 +332,19 @@ const Jars = () => {
 
                     <div className="space-y-1">
                       <div className="flex justify-between items-baseline">
-                        <span className="text-sm text-muted-foreground">Attuale</span>
+                        <span className="text-sm text-muted-foreground">{t('currentAmount')}</span>
                         <span className="text-2xl font-bold text-success">
                           €{Number(jar.current_amount).toFixed(2)}
                         </span>
                       </div>
                       <div className="flex justify-between items-baseline">
-                        <span className="text-sm text-muted-foreground">Obiettivo</span>
+                        <span className="text-sm text-muted-foreground">{t('targetAmount')}</span>
                         <span className="text-lg font-medium">
                           €{Number(jar.target_amount).toFixed(2)}
                         </span>
                       </div>
                       <div className="flex justify-between items-baseline pt-2 border-t">
-                        <span className="text-sm text-muted-foreground">Mancano</span>
+                        <span className="text-sm text-muted-foreground">{t('remaining')}</span>
                         <span className="text-lg font-medium text-primary">
                           €{Math.max(0, jar.target_amount - jar.current_amount).toFixed(2)}
                         </span>
@@ -313,7 +357,7 @@ const Jars = () => {
                       disabled={isCompleted}
                     >
                       <Plus className="w-4 h-4 mr-2" />
-                      Aggiungi Fondi
+                      {t('addFunds')}
                     </Button>
                   </CardContent>
                 </Card>
@@ -329,7 +373,7 @@ const Jars = () => {
         }}>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Aggiungi Fondi</DialogTitle>
+              <DialogTitle>{t('addFunds')}</DialogTitle>
             </DialogHeader>
             {selectedJar && (
               <form onSubmit={handleDeposit} className="space-y-4">
@@ -341,7 +385,7 @@ const Jars = () => {
                   </p>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="deposit-amount">Importo (€)</Label>
+                  <Label htmlFor="deposit-amount">{t('amount')} (€)</Label>
                   <Input
                     id="deposit-amount"
                     name="amount"
@@ -353,14 +397,14 @@ const Jars = () => {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="deposit-description">Descrizione (opzionale)</Label>
+                  <Label htmlFor="deposit-description">{t('description')}</Label>
                   <Input
                     id="deposit-description"
                     name="description"
                     placeholder="es. Risparmio mensile"
                   />
                 </div>
-                <Button type="submit" className="w-full">Conferma Deposito</Button>
+                <Button type="submit" className="w-full">{t('confirm')}</Button>
               </form>
             )}
           </DialogContent>

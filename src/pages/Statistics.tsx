@@ -7,7 +7,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ArrowLeft, TrendingUp, PieChart as PieChartIcon, BarChart3 } from "lucide-react";
 import { Session } from "@supabase/supabase-js";
 import { BarChart, Bar, LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
+import { BarChart, Bar, LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface BudgetItem {
   category: string;
@@ -19,6 +21,7 @@ interface BudgetItem {
 const COLORS = ['#3b82f6', '#ef4444', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899', '#06b6d4'];
 
 export default function Statistics() {
+  const { t } = useLanguage();
   const navigate = useNavigate();
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
@@ -65,7 +68,7 @@ export default function Statistics() {
 
   const getCategoryData = () => {
     const expensesByCategory: { [key: string]: number } = {};
-    
+
     budgetItems
       .filter(item => item.type === "expense")
       .forEach(item => {
@@ -85,7 +88,7 @@ export default function Statistics() {
     [...expenses, ...incomes].forEach(item => {
       const date = new Date(item.date);
       const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
-      
+
       if (!monthlyData[monthKey]) {
         monthlyData[monthKey] = { entrate: 0, uscite: 0 };
       }
@@ -114,7 +117,7 @@ export default function Statistics() {
       const actualAmount = actual
         .filter(exp => exp.category === item.category)
         .reduce((sum, exp) => sum + Number(exp.amount), 0);
-      
+
       return {
         category: item.category,
         pianificato: Number(item.monthly_amount),
@@ -150,8 +153,8 @@ export default function Statistics() {
       <div className="max-w-7xl mx-auto space-y-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <Button 
-              variant="ghost" 
+            <Button
+              variant="ghost"
               size="icon"
               onClick={() => navigate("/")}
               className="rounded-full"
@@ -160,20 +163,20 @@ export default function Statistics() {
             </Button>
             <div>
               <h1 className="text-3xl md:text-4xl font-bold text-foreground">
-                Statistiche
+                {t('statistics')}
               </h1>
-              <p className="text-muted-foreground mt-1">Analisi dettagliata delle tue finanze</p>
+              <p className="text-muted-foreground mt-1">{t('welcomeMessage')}</p>
             </div>
           </div>
           <ThemeToggle />
         </div>
 
         <Tabs defaultValue="overview" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="overview">Panoramica</TabsTrigger>
-            <TabsTrigger value="trends">Andamenti</TabsTrigger>
-            <TabsTrigger value="categories">Categorie</TabsTrigger>
-            <TabsTrigger value="budget">Budget vs Reale</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 h-auto">
+            <TabsTrigger value="overview">{t('overview')}</TabsTrigger>
+            <TabsTrigger value="trends">{t('trends')}</TabsTrigger>
+            <TabsTrigger value="categories">{t('categories')}</TabsTrigger>
+            <TabsTrigger value="budget">{t('budgetVsReal')}</TabsTrigger>
           </TabsList>
 
           <TabsContent value="overview" className="space-y-6">
@@ -182,43 +185,59 @@ export default function Statistics() {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <PieChartIcon className="w-5 h-5" />
-                    Distribuzione Entrate/Uscite
+                    {t('expenseDistribution')}
                   </CardTitle>
-                  <CardDescription>Confronto generale</CardDescription>
+                  <CardDescription>{t('overview')}</CardDescription>
                 </CardHeader>
                 <CardContent className="overflow-hidden">
                   <ResponsiveContainer width="100%" height={300}>
                     <PieChart>
+                      <defs>
+                        {COLORS.map((color, index) => (
+                          <linearGradient key={`gradient-${index}`} id={`gradient-${index}`} x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stopColor={color} stopOpacity={1} />
+                            <stop offset="100%" stopColor={color} stopOpacity={0.6} />
+                          </linearGradient>
+                        ))}
+                      </defs>
                       <Pie
                         data={getIncomeExpenseData()}
                         cx="50%"
                         cy="50%"
                         labelLine={true}
                         label={({ cx, cy, midAngle, innerRadius, outerRadius, percent }) => {
-                          const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
-                          const x = cx + radius * Math.cos(-midAngle * Math.PI / 180);
-                          const y = cy + radius * Math.sin(-midAngle * Math.PI / 180);
+                          const RADIAN = Math.PI / 180;
+                          const radius = outerRadius + 25;
+                          const x = cx + radius * Math.cos(-midAngle * RADIAN);
+                          const y = cy + radius * Math.sin(-midAngle * RADIAN);
                           return (
-                            <text x={x} y={y} fill="white" textAnchor={x > cx ? 'start' : 'end'} dominantBaseline="central" className="text-xs font-semibold">
+                            <text
+                              x={x}
+                              y={y}
+                              fill="hsl(var(--foreground))"
+                              textAnchor={x > cx ? 'start' : 'end'}
+                              dominantBaseline="central"
+                              className="text-xs font-medium"
+                            >
                               {`${(percent * 100).toFixed(0)}%`}
                             </text>
                           );
                         }}
-                        outerRadius={90}
+                        outerRadius={80}
                         fill="#8884d8"
                         dataKey="value"
                         stroke="none"
                       >
                         {getIncomeExpenseData().map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                          <Cell key={`cell-${index}`} fill={`url(#gradient-${index % COLORS.length})`} />
                         ))}
                       </Pie>
-                      <Tooltip 
+                      <Tooltip
                         formatter={(value: number) => `€${value.toFixed(2)}`}
                         contentStyle={{ backgroundColor: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: '8px' }}
                       />
-                      <Legend 
-                        verticalAlign="bottom" 
+                      <Legend
+                        verticalAlign="bottom"
                         height={36}
                         wrapperStyle={{ fontSize: '12px' }}
                       />
@@ -231,30 +250,30 @@ export default function Statistics() {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <BarChart3 className="w-5 h-5" />
-                    Spese per Categoria
+                    {t('categories')}
                   </CardTitle>
-                  <CardDescription>Top spese</CardDescription>
+                  <CardDescription>Top {t('expenses')}</CardDescription>
                 </CardHeader>
                 <CardContent className="overflow-hidden">
                   <ResponsiveContainer width="100%" height={350}>
                     <BarChart data={getCategoryData().slice(0, 5)} margin={{ top: 20, right: 30, left: 20, bottom: 80 }}>
                       <defs>
                         <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.8}/>
-                          <stop offset="95%" stopColor="#3b82f6" stopOpacity={0.3}/>
+                          <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.8} />
+                          <stop offset="95%" stopColor="#3b82f6" stopOpacity={0.3} />
                         </linearGradient>
                       </defs>
                       <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.3} />
-                      <XAxis 
-                        dataKey="name" 
-                        angle={-35} 
-                        textAnchor="end" 
+                      <XAxis
+                        dataKey="name"
+                        angle={-35}
+                        textAnchor="end"
                         height={80}
                         interval={0}
                         tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 11 }}
                       />
                       <YAxis tick={{ fill: 'hsl(var(--muted-foreground))' }} />
-                      <Tooltip 
+                      <Tooltip
                         formatter={(value: number) => `€${value.toFixed(2)}`}
                         contentStyle={{ backgroundColor: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: '8px' }}
                       />
@@ -271,49 +290,49 @@ export default function Statistics() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <TrendingUp className="w-5 h-5" />
-                  Andamento Mensile
+                  {t('monthlyTrend')}
                 </CardTitle>
-                <CardDescription>Entrate e uscite negli ultimi 6 mesi</CardDescription>
+                <CardDescription>{t('income')} / {t('expense')}</CardDescription>
               </CardHeader>
               <CardContent className="overflow-hidden">
                 <ResponsiveContainer width="100%" height={400}>
                   <LineChart data={getMonthlyTrend()} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
                     <defs>
                       <linearGradient id="colorEntrate" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#10b981" stopOpacity={0.3}/>
-                        <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
+                        <stop offset="5%" stopColor="#10b981" stopOpacity={0.3} />
+                        <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
                       </linearGradient>
                       <linearGradient id="colorUscite" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#ef4444" stopOpacity={0.3}/>
-                        <stop offset="95%" stopColor="#ef4444" stopOpacity={0}/>
+                        <stop offset="5%" stopColor="#ef4444" stopOpacity={0.3} />
+                        <stop offset="95%" stopColor="#ef4444" stopOpacity={0} />
                       </linearGradient>
                     </defs>
                     <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.3} />
-                    <XAxis 
-                      dataKey="month" 
+                    <XAxis
+                      dataKey="month"
                       tick={{ fill: 'hsl(var(--muted-foreground))' }}
                     />
                     <YAxis tick={{ fill: 'hsl(var(--muted-foreground))' }} />
-                    <Tooltip 
+                    <Tooltip
                       formatter={(value: number) => `€${value.toFixed(2)}`}
                       contentStyle={{ backgroundColor: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: '8px' }}
                     />
                     <Legend wrapperStyle={{ paddingTop: '20px' }} />
-                    <Line 
-                      type="monotone" 
-                      dataKey="entrate" 
-                      stroke="#10b981" 
-                      strokeWidth={3} 
+                    <Line
+                      type="monotone"
+                      dataKey="entrate"
+                      stroke="#10b981"
+                      strokeWidth={3}
                       name="Entrate"
                       dot={{ fill: '#10b981', r: 4 }}
                       activeDot={{ r: 6 }}
                       fill="url(#colorEntrate)"
                     />
-                    <Line 
-                      type="monotone" 
-                      dataKey="uscite" 
-                      stroke="#ef4444" 
-                      strokeWidth={3} 
+                    <Line
+                      type="monotone"
+                      dataKey="uscite"
+                      stroke="#ef4444"
+                      strokeWidth={3}
                       name="Uscite"
                       dot={{ fill: '#ef4444', r: 4 }}
                       activeDot={{ r: 6 }}
@@ -329,8 +348,8 @@ export default function Statistics() {
             <div className="grid gap-6 md:grid-cols-2">
               <Card>
                 <CardHeader>
-                  <CardTitle>Distribuzione Spese</CardTitle>
-                  <CardDescription>Ripartizione per categoria</CardDescription>
+                  <CardTitle>{t('expenseDistribution')}</CardTitle>
+                  <CardDescription>{t('categories')}</CardDescription>
                 </CardHeader>
                 <CardContent className="overflow-hidden">
                   <ResponsiveContainer width="100%" height={400}>
@@ -346,11 +365,11 @@ export default function Statistics() {
                           const x = cx + radius * Math.cos(-midAngle * RADIAN);
                           const y = cy + radius * Math.sin(-midAngle * RADIAN);
                           return (
-                            <text 
-                              x={x} 
-                              y={y} 
-                              fill="hsl(var(--foreground))" 
-                              textAnchor={x > cx ? 'start' : 'end'} 
+                            <text
+                              x={x}
+                              y={y}
+                              fill="hsl(var(--foreground))"
+                              textAnchor={x > cx ? 'start' : 'end'}
                               dominantBaseline="central"
                               className="text-xs font-medium"
                             >
@@ -366,15 +385,15 @@ export default function Statistics() {
                         strokeWidth={2}
                       >
                         {getCategoryData().map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                          <Cell key={`cell-${index}`} fill={`url(#gradient-${index % COLORS.length})`} />
                         ))}
                       </Pie>
-                      <Tooltip 
+                      <Tooltip
                         formatter={(value: number) => `€${value.toFixed(2)}`}
                         contentStyle={{ backgroundColor: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: '8px' }}
                       />
-                      <Legend 
-                        verticalAlign="bottom" 
+                      <Legend
+                        verticalAlign="bottom"
                         height={36}
                         wrapperStyle={{ fontSize: '12px', paddingTop: '20px' }}
                       />
@@ -385,16 +404,16 @@ export default function Statistics() {
 
               <Card>
                 <CardHeader>
-                  <CardTitle>Dettaglio Categorie</CardTitle>
-                  <CardDescription>Importi per categoria</CardDescription>
+                  <CardTitle>{t('categories')}</CardTitle>
+                  <CardDescription>{t('amount')} / {t('category')}</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
                     {getCategoryData().map((item, index) => (
                       <div key={item.name} className="flex items-center justify-between p-3 rounded-lg border">
                         <div className="flex items-center gap-3">
-                          <div 
-                            className="w-4 h-4 rounded-full" 
+                          <div
+                            className="w-4 h-4 rounded-full"
                             style={{ backgroundColor: COLORS[index % COLORS.length] }}
                           />
                           <span className="font-medium">{item.name}</span>
@@ -411,33 +430,33 @@ export default function Statistics() {
           <TabsContent value="budget" className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle>Budget vs Spese Effettive</CardTitle>
-                <CardDescription>Confronto tra budget pianificato e spese reali</CardDescription>
+                <CardTitle>{t('budgetVsReal')}</CardTitle>
+                <CardDescription>{t('overview')}</CardDescription>
               </CardHeader>
               <CardContent className="overflow-hidden">
                 <ResponsiveContainer width="100%" height={450}>
                   <BarChart data={getBudgetComparison()} margin={{ top: 20, right: 30, left: 20, bottom: 80 }}>
                     <defs>
                       <linearGradient id="colorPianificato" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.8}/>
-                        <stop offset="95%" stopColor="#3b82f6" stopOpacity={0.3}/>
+                        <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.8} />
+                        <stop offset="95%" stopColor="#3b82f6" stopOpacity={0.3} />
                       </linearGradient>
                       <linearGradient id="colorEffettivo" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#ef4444" stopOpacity={0.8}/>
-                        <stop offset="95%" stopColor="#ef4444" stopOpacity={0.3}/>
+                        <stop offset="5%" stopColor="#ef4444" stopOpacity={0.8} />
+                        <stop offset="95%" stopColor="#ef4444" stopOpacity={0.3} />
                       </linearGradient>
                     </defs>
                     <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.3} />
-                    <XAxis 
-                      dataKey="category" 
-                      angle={-35} 
-                      textAnchor="end" 
+                    <XAxis
+                      dataKey="category"
+                      angle={-35}
+                      textAnchor="end"
                       height={80}
                       interval={0}
                       tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 11 }}
                     />
                     <YAxis tick={{ fill: 'hsl(var(--muted-foreground))' }} />
-                    <Tooltip 
+                    <Tooltip
                       formatter={(value: number) => `€${value.toFixed(2)}`}
                       contentStyle={{ backgroundColor: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: '8px' }}
                     />
