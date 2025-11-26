@@ -349,7 +349,7 @@ const Expenses = () => {
             <div className="space-y-2">
               {incomes.length === 0 ? (
                 <p className="text-sm text-muted-foreground text-center py-4">
-                  Nessuna entrata registrata
+                  {t('noIncomesRecorded')}
                 </p>
               ) : (
                 incomes.map((income) => (
@@ -466,7 +466,7 @@ const Expenses = () => {
             <div className="space-y-2">
               {expenses.length === 0 ? (
                 <p className="text-sm text-muted-foreground text-center py-4">
-                  Nessuna spesa registrata
+                  {t('noExpensesRecorded')}
                 </p>
               ) : (
                 expenses.map((expense) => (
@@ -482,7 +482,7 @@ const Expenses = () => {
                         </span>
                         {expense.is_recurring && (
                           <span className="px-2 py-0.5 bg-accent/10 text-accent-foreground rounded text-xs">
-                            Ricorrente
+                            {t('recurring')}
                           </span>
                         )}
                       </div>

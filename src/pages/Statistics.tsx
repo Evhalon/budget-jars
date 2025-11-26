@@ -228,6 +228,7 @@ export default function Statistics() {
                         fill="#8884d8"
                         dataKey="value"
                         stroke="none"
+                        activeShape={false}
                       >
                         {getIncomeExpenseData().map((entry, index) => (
                           <Cell key={`cell-${index}`} fill={`url(#gradient-${index % COLORS.length})`} />
@@ -235,7 +236,15 @@ export default function Statistics() {
                       </Pie>
                       <Tooltip
                         formatter={(value: number) => `€${value.toFixed(2)}`}
-                        contentStyle={{ backgroundColor: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: '8px' }}
+                        contentStyle={{
+                          backgroundColor: '#ffffff',
+                          border: '1px solid #e5e7eb',
+                          borderRadius: '8px',
+                          padding: '8px 12px',
+                          color: '#1f2937',
+                          boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+                        }}
+                        labelStyle={{ color: '#1f2937', fontWeight: 600 }}
                       />
                       <Legend
                         verticalAlign="bottom"
@@ -264,7 +273,6 @@ export default function Statistics() {
                           <stop offset="95%" stopColor="#3b82f6" stopOpacity={0.3} />
                         </linearGradient>
                       </defs>
-                      <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.3} />
                       <XAxis
                         dataKey="name"
                         angle={-35}
@@ -276,7 +284,15 @@ export default function Statistics() {
                       <YAxis tick={{ fill: 'hsl(var(--muted-foreground))' }} />
                       <Tooltip
                         formatter={(value: number) => `€${value.toFixed(2)}`}
-                        contentStyle={{ backgroundColor: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: '8px' }}
+                        contentStyle={{
+                          backgroundColor: '#ffffff',
+                          border: '1px solid #e5e7eb',
+                          borderRadius: '8px',
+                          padding: '8px 12px',
+                          color: '#1f2937',
+                          boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+                        }}
+                        labelStyle={{ color: '#1f2937', fontWeight: 600 }}
                       />
                       <Bar dataKey="value" fill="url(#colorValue)" radius={[8, 8, 0, 0]} />
                     </BarChart>
@@ -316,7 +332,15 @@ export default function Statistics() {
                     <YAxis tick={{ fill: 'hsl(var(--muted-foreground))' }} />
                     <Tooltip
                       formatter={(value: number) => `€${value.toFixed(2)}`}
-                      contentStyle={{ backgroundColor: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: '8px' }}
+                      contentStyle={{
+                        backgroundColor: '#ffffff',
+                        border: '1px solid #e5e7eb',
+                        borderRadius: '8px',
+                        padding: '8px 12px',
+                        color: '#1f2937',
+                        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+                      }}
+                      labelStyle={{ color: '#1f2937', fontWeight: 600 }}
                     />
                     <Legend wrapperStyle={{ paddingTop: '20px' }} />
                     <Line
@@ -355,6 +379,14 @@ export default function Statistics() {
                 <CardContent className="overflow-hidden">
                   <ResponsiveContainer width="100%" height={400}>
                     <PieChart>
+                      <defs>
+                        {COLORS.map((color, index) => (
+                          <linearGradient key={`gradient-${index}`} id={`gradient-${index}`} x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stopColor={color} stopOpacity={1} />
+                            <stop offset="100%" stopColor={color} stopOpacity={0.6} />
+                          </linearGradient>
+                        ))}
+                      </defs>
                       <Pie
                         data={getCategoryData()}
                         cx="50%"
@@ -384,6 +416,7 @@ export default function Statistics() {
                         dataKey="value"
                         stroke="hsl(var(--background))"
                         strokeWidth={2}
+                        activeShape={false}
                       >
                         {getCategoryData().map((entry, index) => (
                           <Cell key={`cell-${index}`} fill={`url(#gradient-${index % COLORS.length})`} />
@@ -391,7 +424,15 @@ export default function Statistics() {
                       </Pie>
                       <Tooltip
                         formatter={(value: number) => `€${value.toFixed(2)}`}
-                        contentStyle={{ backgroundColor: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: '8px' }}
+                        contentStyle={{
+                          backgroundColor: '#ffffff',
+                          border: '1px solid #e5e7eb',
+                          borderRadius: '8px',
+                          padding: '8px 12px',
+                          color: '#1f2937',
+                          boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+                        }}
+                        labelStyle={{ color: '#1f2937', fontWeight: 600 }}
                       />
                       <Legend
                         verticalAlign="bottom"
@@ -459,7 +500,15 @@ export default function Statistics() {
                     <YAxis tick={{ fill: 'hsl(var(--muted-foreground))' }} />
                     <Tooltip
                       formatter={(value: number) => `€${value.toFixed(2)}`}
-                      contentStyle={{ backgroundColor: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: '8px' }}
+                      contentStyle={{
+                        backgroundColor: '#ffffff',
+                        border: '1px solid #e5e7eb',
+                        borderRadius: '8px',
+                        padding: '8px 12px',
+                        color: '#1f2937',
+                        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+                      }}
+                      labelStyle={{ color: '#1f2937', fontWeight: 600 }}
                     />
                     <Legend wrapperStyle={{ paddingTop: '10px' }} />
                     <Bar dataKey="pianificato" fill="url(#colorPianificato)" name="Pianificato" radius={[8, 8, 0, 0]} />

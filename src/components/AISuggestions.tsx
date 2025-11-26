@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Lightbulb, X, Sparkles, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface Suggestion {
   id: string;
@@ -16,6 +17,7 @@ interface Suggestion {
 }
 
 export const AISuggestions = ({ userId }: { userId: string }) => {
+  const { t, language } = useLanguage();
   const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
@@ -40,7 +42,7 @@ export const AISuggestions = ({ userId }: { userId: string }) => {
     setIsLoading(true);
     try {
       const { data, error } = await supabase.functions.invoke("ai-suggestions", {
-        body: { userId }
+        body: { userId, language }
       });
 
       if (error) throw error;
@@ -95,24 +97,24 @@ export const AISuggestions = ({ userId }: { userId: string }) => {
             <Sparkles className="w-8 h-8 text-primary" />
           </div>
           <div>
-            <h3 className="font-semibold mb-2">Suggerimenti AI</h3>
+            <h3 className="font-semibold mb-2">{t('aiSuggestions')}</h3>
             <p className="text-sm text-muted-foreground mb-4">
-              Ottieni consigli personalizzati per risparmiare
+              {t('aiDescription')}
             </p>
-            <Button 
-              onClick={generateSuggestions} 
+            <Button
+              onClick={generateSuggestions}
               disabled={isLoading}
               className="gap-2"
             >
               {isLoading ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin" />
-                  Generazione...
+                  {t('generating')}
                 </>
               ) : (
                 <>
                   <Lightbulb className="w-4 h-4" />
-                  Genera Suggerimenti
+                  {t('generateSuggestions')}
                 </>
               )}
             </Button>
@@ -128,10 +130,10 @@ export const AISuggestions = ({ userId }: { userId: string }) => {
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2">
             <Sparkles className="w-5 h-5 text-primary" />
-            Suggerimenti AI
+            {t('aiSuggestions')}
           </CardTitle>
-          <Button 
-            variant="outline" 
+          <Button
+            variant="outline"
             size="sm"
             onClick={generateSuggestions}
             disabled={isLoading}
@@ -142,7 +144,7 @@ export const AISuggestions = ({ userId }: { userId: string }) => {
       </CardHeader>
       <CardContent className="space-y-3">
         {suggestions.map((suggestion) => (
-          <div 
+          <div
             key={suggestion.id}
             className="p-4 bg-muted/50 rounded-lg space-y-2 hover:bg-muted transition-colors"
           >
