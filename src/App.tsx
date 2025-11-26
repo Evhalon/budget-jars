@@ -10,6 +10,7 @@ import Jars from "./pages/Jars";
 import Projections from "./pages/Projections";
 import Budget from "./pages/Budget";
 import Statistics from "./pages/Statistics";
+import Install from "./pages/Install";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -28,6 +29,7 @@ const App = () => (
           <Route path="/projections" element={<Projections />} />
           <Route path="/budget" element={<Budget />} />
           <Route path="/statistics" element={<Statistics />} />
+          <Route path="/install" element={<Install />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
