@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useLayoutEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -10,17 +10,11 @@ import { useToast } from "@/hooks/use-toast";
 import { Session } from "@supabase/supabase-js";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useQuery } from "@tanstack/react-query";
 
 const Index = () => {
   const { t } = useLanguage();
   const [session, setSession] = useState<Session | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [stats, setStats] = useState({
-    totalIncome: 0,
-    totalExpenses: 0,
-    balance: 0,
-    totalSavings: 0,
-  });
   const [isInstalled, setIsInstalled] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -43,50 +37,37 @@ const Index = () => {
     return () => subscription.unsubscribe();
   }, [navigate]);
 
-  useEffect(() => {
-    if (session?.user) {
-      fetchStats();
-    }
+  const { data: stats = { totalIncome: 0, totalExpenses: 0, balance: 0, totalSavings: 0 }, isLoading: loading } = useQuery({
+    queryKey: ['dashboardStats', session?.user?.id],
+    queryFn: async () => {
+      if (!session?.user) throw new Error('No session');
 
-    // Check if app is installed
+      const [incomesRes, expensesRes, jarsRes] = await Promise.all([
+        supabase.from("incomes").select("amount").eq("user_id", session.user.id),
+        supabase.from("expenses").select("amount").eq("user_id", session.user.id),
+        supabase.from("jars").select("current_amount").eq("user_id", session.user.id),
+      ]);
+
+      const totalIncome = incomesRes.data?.reduce((sum, income) => sum + Number(income.amount), 0) || 0;
+      const totalExpenses = expensesRes.data?.reduce((sum, expense) => sum + Number(expense.amount), 0) || 0;
+      const totalSavings = jarsRes.data?.reduce((sum, jar) => sum + Number(jar.current_amount), 0) || 0;
+
+      return {
+        totalIncome,
+        totalExpenses,
+        balance: totalIncome - totalExpenses,
+        totalSavings,
+      };
+    },
+    enabled: !!session?.user,
+  });
+
+  // Check if app is installed
+  useEffect(() => {
     if (window.matchMedia('(display-mode: standalone)').matches) {
       setIsInstalled(true);
     }
-  }, [session]);
-
-  const fetchStats = async () => {
-    if (!session?.user) return;
-
-    setLoading(true);
-
-    const { data: incomes } = await supabase
-      .from("incomes")
-      .select("amount")
-      .eq("user_id", session.user.id);
-
-    const { data: expenses } = await supabase
-      .from("expenses")
-      .select("amount")
-      .eq("user_id", session.user.id);
-
-    const { data: jars } = await supabase
-      .from("jars")
-      .select("current_amount")
-      .eq("user_id", session.user.id);
-
-    const totalIncome = incomes?.reduce((sum, income) => sum + Number(income.amount), 0) || 0;
-    const totalExpenses = expenses?.reduce((sum, expense) => sum + Number(expense.amount), 0) || 0;
-    const totalSavings = jars?.reduce((sum, jar) => sum + Number(jar.current_amount), 0) || 0;
-
-    setStats({
-      totalIncome,
-      totalExpenses,
-      balance: totalIncome - totalExpenses,
-      totalSavings,
-    });
-
-    setLoading(false);
-  };
+  }, []);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -96,19 +77,27 @@ const Index = () => {
     });
   };
 
-  useEffect(() => {
-    // Scroll restoration
+  // Scroll restoration - restore BEFORE paint to avoid flash
+  useLayoutEffect(() => {
     const scrollPosition = sessionStorage.getItem("dashboardScrollPosition");
     if (scrollPosition) {
-      window.scrollTo(0, parseInt(scrollPosition));
+      window.scrollTo(0, parseInt(scrollPosition, 10));
     }
+  }, []);
 
+  // Save scroll position on unmount
+  useEffect(() => {
     const handleScroll = () => {
       sessionStorage.setItem("dashboardScrollPosition", window.scrollY.toString());
     };
 
     window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      // Save one last time on unmount
+      sessionStorage.setItem("dashboardScrollPosition", window.scrollY.toString());
+    };
   }, []);
 
   if (!session) return null;
@@ -210,17 +199,7 @@ const Index = () => {
             </div>
           </Link>
 
-          {isInstalled ? (
-            <div className="p-6 text-center space-y-4 h-full rounded-lg border border-border/50 shadow-sm opacity-50">
-              <div className="p-4 bg-green-500/10 rounded-full inline-block">
-                <Download className="w-8 h-8 text-green-500" />
-              </div>
-              <div>
-                <h3 className="font-semibold text-lg">{t('install')}</h3>
-                <p className="text-sm text-muted-foreground">{t('installAppDescription')}</p>
-              </div>
-            </div>
-          ) : (
+          {!isInstalled && (
             <Link to="/install" className="block">
               <div className="p-6 text-center space-y-4 cursor-pointer h-full rounded-lg border border-border/50 shadow-sm hover:shadow-md hover:border-primary/30 transition-all">
                 <div className="p-4 bg-green-500/10 rounded-full inline-block">
