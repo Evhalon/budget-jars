@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Download, Smartphone, Check } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 const Install = () => {
   const navigate = useNavigate();
@@ -34,11 +35,11 @@ const Install = () => {
 
     deferredPrompt.prompt();
     const { outcome } = await deferredPrompt.userChoice;
-    
+
     if (outcome === 'accepted') {
       setIsInstalled(true);
     }
-    
+
     setDeferredPrompt(null);
     setIsInstallable(false);
   };
@@ -46,13 +47,17 @@ const Install = () => {
   return (
     <div className="min-h-screen bg-background p-6">
       <div className="max-w-2xl mx-auto space-y-6">
-        <Button 
-          variant="ghost" 
+        <Button
+          variant="ghost"
           onClick={() => navigate('/')}
           className="mb-4"
         >
           ← Torna alla Home
         </Button>
+
+        <div className="absolute top-4 right-4">
+          <ThemeToggle />
+        </div>
 
         <Card>
           <CardHeader>
@@ -82,7 +87,7 @@ const Install = () => {
                     <p className="text-sm text-muted-foreground">
                       Per installare questa app:
                     </p>
-                    
+
                     <div className="space-y-3">
                       <div className="border rounded-lg p-4">
                         <h3 className="font-medium mb-2">Su iPhone/iPad:</h3>
