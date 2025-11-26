@@ -7,6 +7,7 @@ import { AISuggestions } from "@/components/AISuggestions";
 import { TrendingUp, TrendingDown, Wallet, PiggyBank, LogOut, Plus, Receipt, Target, TrendingUpIcon, Calculator, Smartphone } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Session } from "@supabase/supabase-js";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 const Index = () => {
   const [session, setSession] = useState<Session | null>(null);
@@ -107,9 +108,12 @@ const Index = () => {
             </h1>
             <p className="text-muted-foreground mt-1">Benvenuto nel tuo budget manager</p>
           </div>
-          <Button variant="outline" size="icon" onClick={handleLogout}>
-            <LogOut className="w-4 h-4" />
-          </Button>
+          <div className="flex items-center gap-2">
+            <ThemeToggle />
+            <Button variant="outline" size="icon" onClick={handleLogout}>
+              <LogOut className="w-4 h-4" />
+            </Button>
+          </div>
         </div>
 
         {/* Stats Grid */}

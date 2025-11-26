@@ -10,6 +10,7 @@ import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, Plus, Trash2, PiggyBank, TrendingUp } from "lucide-react";
 import { Session } from "@supabase/supabase-js";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 interface Jar {
   id: string;
@@ -187,14 +188,16 @@ const Jars = () => {
               <p className="text-muted-foreground">I tuoi "jars" per raggiungere i tuoi sogni</p>
             </div>
           </div>
-          <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
-            <DialogTrigger asChild>
-              <Button className="gap-2">
-                <Plus className="w-4 h-4" />
-                Nuovo Jar
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
+          <div className="flex items-center gap-2">
+            <ThemeToggle />
+            <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
+              <DialogTrigger asChild>
+                <Button className="gap-2">
+                  <Plus className="w-4 h-4" />
+                  Nuovo Jar
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
               <DialogHeader>
                 <DialogTitle>Crea Nuovo Obiettivo</DialogTitle>
               </DialogHeader>
@@ -224,6 +227,7 @@ const Jars = () => {
               </form>
             </DialogContent>
           </Dialog>
+          </div>
         </div>
 
         {/* Jars Grid */}

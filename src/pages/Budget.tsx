@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Plus, TrendingUp, TrendingDown, Trash2, ArrowLeft } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 interface BudgetItem {
   id: string;
@@ -181,10 +182,13 @@ export default function Budget() {
               <p className="text-muted-foreground mt-1">Gestisci entrate e uscite</p>
             </div>
           </div>
-          <Button onClick={() => setIsAdding(!isAdding)} className="gap-2">
-            <Plus className="w-4 h-4" />
-            Aggiungi
-          </Button>
+          <div className="flex items-center gap-2">
+            <ThemeToggle />
+            <Button onClick={() => setIsAdding(!isAdding)} className="gap-2">
+              <Plus className="w-4 h-4" />
+              Aggiungi
+            </Button>
+          </div>
         </div>
 
         {/* Summary Cards */}
