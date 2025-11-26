@@ -8,8 +8,10 @@ import { TrendingUp, TrendingDown, Wallet, PiggyBank, LogOut, Plus, Receipt, Tar
 import { useToast } from "@/hooks/use-toast";
 import { Session } from "@supabase/supabase-js";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const Index = () => {
+  const { t } = useLanguage();
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState({
@@ -110,9 +112,9 @@ const Index = () => {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl md:text-4xl font-bold text-foreground">
-              Dashboard
+              {t('appName')}
             </h1>
-            <p className="text-muted-foreground mt-1">Benvenuto nel tuo budget manager</p>
+            <p className="text-muted-foreground mt-1">{t('welcomeMessage')}</p>
           </div>
           <div className="flex items-center gap-2">
             <ThemeToggle />
@@ -125,32 +127,32 @@ const Index = () => {
         {/* Stats Grid */}
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           <StatCard
-            title="Entrate Totali"
+            title={t('totalIncome')}
             value={`€${stats.totalIncome.toFixed(2)}`}
             icon={TrendingUp}
             variant="success"
-            trend="Questo mese"
+            trend={t('thisMonth')}
           />
           <StatCard
-            title="Spese Totali"
+            title={t('totalExpenses')}
             value={`€${stats.totalExpenses.toFixed(2)}`}
             icon={TrendingDown}
             variant="destructive"
-            trend="Questo mese"
+            trend={t('thisMonth')}
           />
           <StatCard
-            title="Saldo Disponibile"
+            title={t('availableBalance')}
             value={`€${stats.balance.toFixed(2)}`}
             icon={Wallet}
             variant="default"
-            trend="Disponibile"
+            trend={t('available')}
           />
           <StatCard
-            title="Risparmi"
+            title={t('savings')}
             value={`€${stats.totalSavings.toFixed(2)}`}
             icon={PiggyBank}
             variant="default"
-            trend="Negli obiettivi"
+            trend={t('inGoals')}
           />
         </div>
 
@@ -165,9 +167,9 @@ const Index = () => {
                 <Receipt className="w-8 h-8 text-red-600" />
               </div>
               <div>
-                <h3 className="font-semibold mb-1">Gestisci Spese</h3>
+                <h3 className="font-semibold mb-1">{t('manageExpenses')}</h3>
                 <p className="text-sm text-muted-foreground">
-                  Traccia entrate e spese
+                  {t('trackIncomeExpenses')}
                 </p>
               </div>
             </div>
@@ -179,9 +181,9 @@ const Index = () => {
                 <Target className="w-8 h-8 text-green-600" />
               </div>
               <div>
-                <h3 className="font-semibold mb-1">Obiettivi di Risparmio</h3>
+                <h3 className="font-semibold mb-1">{t('savingsGoals')}</h3>
                 <p className="text-sm text-muted-foreground">
-                  I tuoi jars finanziari
+                  {t('yourFinancialJars')}
                 </p>
               </div>
             </div>
@@ -195,9 +197,9 @@ const Index = () => {
                 <Calculator className="w-8 h-8 text-primary" />
               </div>
               <div>
-                <h3 className="font-semibold mb-1">Budget</h3>
+                <h3 className="font-semibold mb-1">{t('budget')}</h3>
                 <p className="text-sm text-muted-foreground">
-                  Pianifica entrate e uscite
+                  {t('planIncomeExpenses')}
                 </p>
               </div>
             </div>
@@ -212,9 +214,9 @@ const Index = () => {
                 <div>
                   <h3 className="text-xl font-semibold mb-1 flex items-center gap-2">
                     <Smartphone className="w-6 h-6" />
-                    Installa l'App
+                    {t('installApp')}
                   </h3>
-                  <p className="text-sm text-muted-foreground">Aggiungi Budget Manager alla tua schermata home per un accesso rapido</p>
+                  <p className="text-sm text-muted-foreground">{t('installAppDescription')}</p>
                 </div>
               </div>
             </div>

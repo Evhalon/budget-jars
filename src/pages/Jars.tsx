@@ -29,7 +29,6 @@ const Jars = () => {
   const [jars, setJars] = useState<Jar[]>([]);
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [isDepositDialogOpen, setIsDepositDialogOpen] = useState(false);
-  const [isDepositDialogOpen, setIsDepositDialogOpen] = useState(false);
   const [selectedJar, setSelectedJar] = useState<Jar | null>(null);
   const [editingJar, setEditingJar] = useState<Jar | null>(null);
   const navigate = useNavigate();

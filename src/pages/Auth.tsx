@@ -6,12 +6,16 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Wallet } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { Loader2 } from "lucide-react";
 
 const Auth = () => {
-  const [isLoading, setIsLoading] = useState(false);
+  const { t } = useLanguage();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [isLogin, setIsLogin] = useState(true);
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -23,70 +27,53 @@ const Auth = () => {
     });
   }, [navigate]);
 
-  const handleSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
-
-    const formData = new FormData(e.currentTarget);
-    const email = formData.get("signup-email") as string;
-    const password = formData.get("signup-password") as string;
-    const fullName = formData.get("full-name") as string;
-
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: {
-          full_name: fullName,
+    setLoading(true);
+    try {
+      const { error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/`,
         },
-        emailRedirectTo: `${window.location.origin}/`,
-      },
-    });
+      });
 
-    setIsLoading(false);
-
-    if (error) {
+      if (error) throw error;
+      toast({
+        title: t('success'),
+        description: t('checkEmail'),
+      });
+    } catch (error: any) {
       toast({
         variant: "destructive",
-        title: "Errore",
+        title: t('error'),
         description: error.message,
       });
-    } else {
-      toast({
-        title: "Account creato!",
-        description: "Accesso effettuato con successo.",
-      });
-      navigate("/");
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleSignIn = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
+    setLoading(true);
+    try {
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
 
-    const formData = new FormData(e.currentTarget);
-    const email = formData.get("signin-email") as string;
-    const password = formData.get("signin-password") as string;
-
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-
-    setIsLoading(false);
-
-    if (error) {
+      if (error) throw error;
+      navigate("/");
+    } catch (error: any) {
       toast({
         variant: "destructive",
-        title: "Errore",
+        title: t('error'),
         description: error.message,
       });
-    } else {
-      toast({
-        title: "Benvenuto!",
-        description: "Accesso effettuato con successo.",
-      });
-      navigate("/");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -96,87 +83,53 @@ const Auth = () => {
         <ThemeToggle />
       </div>
       <Card className="w-full max-w-md shadow-xl">
-        <CardHeader className="text-center space-y-2">
-          <div className="mx-auto w-16 h-16 bg-gradient-to-br from-primary to-primary/70 rounded-2xl flex items-center justify-center shadow-lg">
-            <Wallet className="w-8 h-8 text-primary-foreground" />
-          </div>
-          <CardTitle className="text-3xl font-bold">Budget Manager</CardTitle>
-          <CardDescription>Gestisci il tuo budget personale</CardDescription>
+        <CardHeader className="space-y-1">
+          <CardTitle className="text-2xl font-bold text-center">{t('appName')}</CardTitle>
+          <CardDescription className="text-center">
+            {isLogin ? t('loginDesc') : t('registerDesc')}
+          </CardDescription>
         </CardHeader>
         <CardContent>
-          <Tabs defaultValue="signin" className="w-full">
-            <TabsList className="grid w-full grid-cols-2 mb-6">
-              <TabsTrigger value="signin">Accedi</TabsTrigger>
-              <TabsTrigger value="signup">Registrati</TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="signin">
-              <form onSubmit={handleSignIn} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="signin-email">Email</Label>
-                  <Input
-                    id="signin-email"
-                    name="signin-email"
-                    type="email"
-                    placeholder="nome@esempio.it"
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="signin-password">Password</Label>
-                  <Input
-                    id="signin-password"
-                    name="signin-password"
-                    type="password"
-                    placeholder="••••••••"
-                    required
-                  />
-                </div>
-                <Button type="submit" className="w-full" disabled={isLoading}>
-                  {isLoading ? "Accesso..." : "Accedi"}
-                </Button>
-              </form>
-            </TabsContent>
-
-            <TabsContent value="signup">
-              <form onSubmit={handleSignUp} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="full-name">Nome completo</Label>
-                  <Input
-                    id="full-name"
-                    name="full-name"
-                    type="text"
-                    placeholder="Mario Rossi"
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="signup-email">Email</Label>
-                  <Input
-                    id="signup-email"
-                    name="signup-email"
-                    type="email"
-                    placeholder="nome@esempio.it"
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="signup-password">Password</Label>
-                  <Input
-                    id="signup-password"
-                    name="signup-password"
-                    type="password"
-                    placeholder="••••••••"
-                    required
-                    minLength={6}
-                  />
-                </div>
-                <Button type="submit" className="w-full" disabled={isLoading}>
-                  {isLoading ? "Registrazione..." : "Registrati"}
-                </Button>
-              </form>
-            </TabsContent>
-          </Tabs>
+          <form onSubmit={isLogin ? handleLogin : handleRegister} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="m@example.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="password">Password</Label>
+              <Input
+                id="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+            </div>
+            <Button className="w-full" type="submit" disabled={loading}>
+              {loading ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : null}
+              {isLogin ? t('login') : t('register')}
+            </Button>
+          </form>
+          <div className="mt-4 text-center text-sm">
+            <span className="text-muted-foreground">
+              {isLogin ? t('noAccount') : t('hasAccount')}
+            </span>{" "}
+            <button
+              className="text-primary hover:underline font-medium"
+              onClick={() => setIsLogin(!isLogin)}
+            >
+              {isLogin ? t('register') : t('login')}
+            </button>
+          </div>
         </CardContent>
       </Card>
     </div>
