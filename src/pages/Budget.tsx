@@ -211,8 +211,9 @@ export default function Budget() {
   return (
     <div className="min-h-screen bg-background p-4 md:p-8">
       <div className="max-w-7xl mx-auto space-y-6">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
+        {/* Header */}
+        <div className="flex flex-col gap-6">
+          <div className="flex justify-between items-start">
             <Button
               variant="ghost"
               size="icon"
@@ -221,20 +222,21 @@ export default function Budget() {
             >
               <ArrowLeft className="w-5 h-5" />
             </Button>
+            <ThemeToggle />
+          </div>
+
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
             <div>
               <h1 className="text-3xl md:text-4xl font-bold text-foreground">
                 {t('budget')}
               </h1>
               <p className="text-muted-foreground mt-1">{t('welcomeMessage')}</p>
             </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <ThemeToggle />
             <Button onClick={() => {
               setEditingItem(null);
               setNewItem({ type: "expense", category: "", description: "", amount: "", frequency: "monthly" });
               setIsAdding(!isAdding);
-            }} className="gap-2">
+            }} className="gap-2 w-full md:w-auto">
               <Plus className="w-4 h-4" />
               {t('add')}
             </Button>

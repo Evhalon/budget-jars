@@ -205,26 +205,28 @@ const Jars = () => {
     <div className="min-h-screen bg-background">
       <div className="container max-w-6xl mx-auto p-4 md:p-6 space-y-6">
         {/* Header */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
+        <div className="flex flex-col gap-6">
+          <div className="flex justify-between items-start">
             <Link to="/">
               <Button variant="outline" size="icon" className="rounded-full">
                 <ArrowLeft className="w-4 h-4" />
               </Button>
             </Link>
+            <ThemeToggle />
+          </div>
+
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
             <div>
               <h1 className="text-3xl md:text-4xl font-bold">{t('jars')}</h1>
-              <p className="text-muted-foreground">{t('welcomeMessage')}</p>
+              <p className="text-muted-foreground mt-1">{t('manageJars')}</p>
             </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <ThemeToggle />
+
             <Dialog open={isCreateDialogOpen} onOpenChange={(open) => {
               setIsCreateDialogOpen(open);
               if (!open) setEditingJar(null);
             }}>
               <DialogTrigger asChild>
-                <Button className="gap-2">
+                <Button className="gap-2 w-full md:w-auto">
                   <Plus className="w-4 h-4" />
                   {t('newJar')}
                 </Button>

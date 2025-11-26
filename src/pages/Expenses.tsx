@@ -274,19 +274,20 @@ const Expenses = () => {
     <div className="min-h-screen bg-background">
       <div className="container max-w-6xl mx-auto p-4 md:p-6 space-y-6">
         {/* Header */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
+        <div className="flex flex-col gap-6">
+          <div className="flex justify-between items-start">
             <Link to="/">
               <Button variant="outline" size="icon" className="rounded-full">
                 <ArrowLeft className="w-4 h-4" />
               </Button>
             </Link>
-            <div>
-              <h1 className="text-3xl md:text-4xl font-bold">{t('appName')}</h1>
-              <p className="text-muted-foreground">{t('welcomeMessage')}</p>
-            </div>
+            <ThemeToggle />
           </div>
-          <ThemeToggle />
+
+          <div>
+            <h1 className="text-3xl md:text-4xl font-bold">{t('appName')}</h1>
+            <p className="text-muted-foreground mt-1">{t('welcomeMessage')}</p>
+          </div>
         </div>
 
         {/* Income Section */}

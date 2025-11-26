@@ -107,20 +107,20 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="container max-w-6xl mx-auto p-4 md:p-6 space-y-6">
+      <div className="container max-w-6xl mx-auto p-4 md:p-6 space-y-8">
         {/* Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl md:text-4xl font-bold text-foreground">
-              {t('appName')}
-            </h1>
-            <p className="text-muted-foreground mt-1">{t('welcomeMessage')}</p>
-          </div>
-          <div className="flex items-center gap-2">
+        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <div className="flex justify-between items-center md:order-2">
             <ThemeToggle />
             <Button variant="outline" size="icon" onClick={handleLogout}>
               <LogOut className="w-4 h-4" />
             </Button>
+          </div>
+          <div className="md:order-1">
+            <h1 className="text-3xl md:text-4xl font-bold text-foreground">
+              {t('appName')}
+            </h1>
+            <p className="text-muted-foreground mt-1">{t('welcomeMessage')}</p>
           </div>
         </div>
 
@@ -160,7 +160,7 @@ const Index = () => {
         <AISuggestions userId={session.user.id} />
 
         {/* Quick Actions */}
-        <div className="grid gap-4 md:grid-cols-4">
+        <div className="grid gap-4 md:grid-cols-4 pt-4">
           <Link to="/expenses" className="block">
             <div className="p-6 text-center space-y-4 cursor-pointer h-full rounded-lg border border-border/50 shadow-sm hover:shadow-md hover:border-primary/30 transition-all">
               <div className="p-4 bg-red-500/10 rounded-full inline-block">

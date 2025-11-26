@@ -7,7 +7,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ArrowLeft, TrendingUp, PieChart as PieChartIcon, BarChart3 } from "lucide-react";
 import { Session } from "@supabase/supabase-js";
 import { BarChart, Bar, LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
-import { BarChart, Bar, LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { useLanguage } from "@/contexts/LanguageContext";
 
@@ -151,8 +150,9 @@ export default function Statistics() {
   return (
     <div className="min-h-screen bg-background p-4 md:p-8">
       <div className="max-w-7xl mx-auto space-y-6">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
+        {/* Header */}
+        <div className="flex flex-col gap-6">
+          <div className="flex justify-between items-start">
             <Button
               variant="ghost"
               size="icon"
@@ -161,14 +161,15 @@ export default function Statistics() {
             >
               <ArrowLeft className="w-5 h-5" />
             </Button>
-            <div>
-              <h1 className="text-3xl md:text-4xl font-bold text-foreground">
-                {t('statistics')}
-              </h1>
-              <p className="text-muted-foreground mt-1">{t('welcomeMessage')}</p>
-            </div>
+            <ThemeToggle />
           </div>
-          <ThemeToggle />
+
+          <div>
+            <h1 className="text-3xl md:text-4xl font-bold text-foreground">
+              {t('statistics')}
+            </h1>
+            <p className="text-muted-foreground mt-1">{t('welcomeMessage')}</p>
+          </div>
         </div>
 
         <Tabs defaultValue="overview" className="space-y-6">
