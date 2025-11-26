@@ -11,6 +11,7 @@ import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, Plus, Trash2, TrendingDown } from "lucide-react";
 import { Session } from "@supabase/supabase-js";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 interface Expense {
   id: string;
@@ -214,16 +215,19 @@ const Expenses = () => {
     <div className="min-h-screen bg-background">
       <div className="container max-w-6xl mx-auto p-4 md:p-6 space-y-6">
         {/* Header */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
             <Link to="/">
               <Button variant="outline" size="icon" className="rounded-full">
                 <ArrowLeft className="w-4 h-4" />
               </Button>
             </Link>
-          <div>
-            <h1 className="text-3xl md:text-4xl font-bold">Gestione Finanziaria</h1>
-            <p className="text-muted-foreground">Traccia entrate e spese</p>
+            <div>
+              <h1 className="text-3xl md:text-4xl font-bold">Gestione Finanziaria</h1>
+              <p className="text-muted-foreground">Traccia entrate e spese</p>
+            </div>
           </div>
+          <ThemeToggle />
         </div>
 
         {/* Income Section */}

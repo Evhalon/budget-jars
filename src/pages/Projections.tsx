@@ -10,6 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, Calculator, TrendingUp, Save, Trash2, Loader2 } from "lucide-react";
 import { Session } from "@supabase/supabase-js";
 import { Textarea } from "@/components/ui/textarea";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 interface Projection {
   id: string;
@@ -181,14 +182,16 @@ const Projections = () => {
               <p className="text-muted-foreground">Calcola il futuro dei tuoi risparmi con AI</p>
             </div>
           </div>
-          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-            <DialogTrigger asChild>
-              <Button className="gap-2">
-                <Calculator className="w-4 h-4" />
-                Nuova Proiezione
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-2xl">
+          <div className="flex items-center gap-2">
+            <ThemeToggle />
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+              <DialogTrigger asChild>
+                <Button className="gap-2">
+                  <Calculator className="w-4 h-4" />
+                  Nuova Proiezione
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-2xl">
               <DialogHeader>
                 <DialogTitle>Calcola Proiezione Finanziaria</DialogTitle>
               </DialogHeader>
@@ -280,6 +283,7 @@ const Projections = () => {
               </form>
             </DialogContent>
           </Dialog>
+          </div>
         </div>
 
         {/* Projections Grid */}
