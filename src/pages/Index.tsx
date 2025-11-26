@@ -2,9 +2,10 @@ import { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { StatCard } from "@/components/StatCard";
 import { AISuggestions } from "@/components/AISuggestions";
-import { TrendingUp, TrendingDown, Wallet, PiggyBank, LogOut, Plus, Receipt, Target, TrendingUpIcon, Calculator, Smartphone } from "lucide-react";
+import { TrendingUp, TrendingDown, Wallet, PiggyBank, LogOut, Plus, Download, BarChart3, ArrowRight } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Session } from "@supabase/supabase-js";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -95,6 +96,21 @@ const Index = () => {
     });
   };
 
+  useEffect(() => {
+    // Scroll restoration
+    const scrollPosition = sessionStorage.getItem("dashboardScrollPosition");
+    if (scrollPosition) {
+      window.scrollTo(0, parseInt(scrollPosition));
+    }
+
+    const handleScroll = () => {
+      sessionStorage.setItem("dashboardScrollPosition", window.scrollY.toString());
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   if (!session) return null;
 
   if (loading) {
@@ -128,113 +144,119 @@ const Index = () => {
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           <StatCard
             title={t('totalIncome')}
-            value={`€${stats.totalIncome.toFixed(2)}`}
+            value={`€${stats.totalIncome.toFixed(2)} `}
             icon={TrendingUp}
             variant="success"
             trend={t('thisMonth')}
           />
           <StatCard
             title={t('totalExpenses')}
-            value={`€${stats.totalExpenses.toFixed(2)}`}
+            value={`€${stats.totalExpenses.toFixed(2)} `}
             icon={TrendingDown}
             variant="destructive"
             trend={t('thisMonth')}
           />
           <StatCard
             title={t('availableBalance')}
-            value={`€${stats.balance.toFixed(2)}`}
+            value={`€${stats.balance.toFixed(2)} `}
             icon={Wallet}
             variant="default"
             trend={t('available')}
           />
           <StatCard
             title={t('savings')}
-            value={`€${stats.totalSavings.toFixed(2)}`}
+            value={`€${stats.totalSavings.toFixed(2)} `}
             icon={PiggyBank}
             variant="default"
             trend={t('inGoals')}
           />
         </div>
 
-        {/* AI Suggestions */}
-        <AISuggestions userId={session.user.id} />
-
         {/* Quick Actions */}
-        <div className="grid gap-4 md:grid-cols-4 pt-4">
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 pt-4">
           <Link to="/expenses" className="block">
             <div className="p-6 text-center space-y-4 cursor-pointer h-full rounded-lg border border-border/50 shadow-sm hover:shadow-md hover:border-primary/30 transition-all">
               <div className="p-4 bg-red-500/10 rounded-full inline-block">
-                <Receipt className="w-8 h-8 text-red-600" />
+                <TrendingDown className="w-8 h-8 text-red-500" />
               </div>
               <div>
-                <h3 className="font-semibold mb-1">{t('manageExpenses')}</h3>
-                <p className="text-sm text-muted-foreground">
-                  {t('trackIncomeExpenses')}
-                </p>
+                <h3 className="font-semibold text-lg">{t('manageExpenses')}</h3>
+                <p className="text-sm text-muted-foreground">{t('trackIncomeExpenses')}</p>
               </div>
             </div>
           </Link>
 
           <Link to="/jars" className="block">
             <div className="p-6 text-center space-y-4 cursor-pointer h-full rounded-lg border border-border/50 shadow-sm hover:shadow-md hover:border-primary/30 transition-all">
-              <div className="p-4 bg-green-500/10 rounded-full inline-block">
-                <Target className="w-8 h-8 text-green-600" />
+              <div className="p-4 bg-primary/10 rounded-full inline-block">
+                <PiggyBank className="w-8 h-8 text-primary" />
               </div>
               <div>
-                <h3 className="font-semibold mb-1">{t('savingsGoals')}</h3>
-                <p className="text-sm text-muted-foreground">
-                  {t('yourFinancialJars')}
-                </p>
+                <h3 className="font-semibold text-lg">{t('savingsGoals')}</h3>
+                <p className="text-sm text-muted-foreground">{t('yourFinancialJars')}</p>
               </div>
             </div>
           </Link>
 
-
-
           <Link to="/budget" className="block">
             <div className="p-6 text-center space-y-4 cursor-pointer h-full rounded-lg border border-border/50 shadow-sm hover:shadow-md hover:border-primary/30 transition-all">
-              <div className="p-4 bg-primary/10 rounded-full inline-block">
-                <Calculator className="w-8 h-8 text-primary" />
+              <div className="p-4 bg-blue-500/10 rounded-full inline-block">
+                <Wallet className="w-8 h-8 text-blue-500" />
               </div>
               <div>
-                <h3 className="font-semibold mb-1">{t('budget')}</h3>
-                <p className="text-sm text-muted-foreground">
-                  {t('planIncomeExpenses')}
-                </p>
+                <h3 className="font-semibold text-lg">{t('budget')}</h3>
+                <p className="text-sm text-muted-foreground">{t('planIncomeExpenses')}</p>
+              </div>
+            </div>
+          </Link>
+
+          {isInstalled ? (
+            <div className="p-6 text-center space-y-4 h-full rounded-lg border border-border/50 shadow-sm opacity-50">
+              <div className="p-4 bg-green-500/10 rounded-full inline-block">
+                <Download className="w-8 h-8 text-green-500" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-lg">{t('install')}</h3>
+                <p className="text-sm text-muted-foreground">{t('installAppDescription')}</p>
+              </div>
+            </div>
+          ) : (
+            <Link to="/install" className="block">
+              <div className="p-6 text-center space-y-4 cursor-pointer h-full rounded-lg border border-border/50 shadow-sm hover:shadow-md hover:border-primary/30 transition-all">
+                <div className="p-4 bg-green-500/10 rounded-full inline-block">
+                  <Download className="w-8 h-8 text-green-500" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-lg">{t('install')}</h3>
+                  <p className="text-sm text-muted-foreground">{t('installAppDesc')}</p>
+                </div>
+              </div>
+            </Link>
+          )}
+        </div>
+
+        {/* AI Suggestions */}
+        <AISuggestions userId={session.user.id} />
+
+        {/* Statistics Link */}
+        <div className="pt-8 pb-4">
+          <Link to="/statistics" className="block">
+            <div className="p-6 rounded-lg border border-border/50 shadow-sm hover:shadow-md hover:border-primary/30 transition-all bg-card">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <div className="p-3 bg-purple-500/10 rounded-full">
+                    <BarChart3 className="w-6 h-6 text-purple-500" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-lg">{t('viewStatistics')}</h3>
+                    <p className="text-sm text-muted-foreground">{t('viewStatistics')}</p>
+                  </div>
+                </div>
+                <ArrowRight className="w-5 h-5 text-muted-foreground" />
               </div>
             </div>
           </Link>
         </div>
-
-        {/* Install App Banner */}
-        {!isInstalled && (
-          <Link to="/install">
-            <div className="p-6 rounded-lg border border-primary/30 shadow-sm hover:shadow-md transition-all bg-gradient-to-r from-cyan-500/10 to-blue-500/10">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="text-xl font-semibold mb-1 flex items-center gap-2">
-                    <Smartphone className="w-6 h-6" />
-                    {t('installApp')}
-                  </h3>
-                  <p className="text-sm text-muted-foreground">{t('installAppDescription')}</p>
-                </div>
-              </div>
-            </div>
-          </Link>
-        )}
-
-        {/* Statistics Link */}
-        <Link to="/statistics">
-          <div className="p-6 rounded-lg border border-border/50 shadow-sm hover:shadow-md hover:border-primary/30 transition-all bg-gradient-to-r from-primary/5 to-accent/5">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="text-xl font-semibold mb-1">Visualizza Statistiche</h3>
-                <p className="text-sm text-muted-foreground">Analizza i tuoi dati finanziari con grafici dettagliati</p>
-              </div>
-              <TrendingUpIcon className="w-12 h-12 text-primary" />
-            </div>
-          </div>
-        </Link>
       </div>
     </div>
   );

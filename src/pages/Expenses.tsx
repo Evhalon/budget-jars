@@ -355,7 +355,7 @@ const Expenses = () => {
                 incomes.map((income) => (
                   <div
                     key={income.id}
-                    className="flex items-center justify-between p-3 bg-success/5 rounded-lg border border-success/20"
+                    className="flex items-center justify-between p-3 bg-card rounded-lg border shadow-sm"
                   >
                     <div className="flex-1">
                       <p className="font-medium">€{Number(income.amount).toFixed(2)}</p>
@@ -370,7 +370,7 @@ const Expenses = () => {
                         size="icon"
                         onClick={() => openEditIncome(income)}
                       >
-                        <Pencil className="w-4 h-4 text-primary" />
+                        <Pencil className="w-4 h-4 text-muted-foreground" />
                       </Button>
                       <Button
                         variant="ghost"
@@ -472,16 +472,16 @@ const Expenses = () => {
                 expenses.map((expense) => (
                   <div
                     key={expense.id}
-                    className="flex items-center justify-between p-3 bg-destructive/5 rounded-lg border border-destructive/20"
+                    className="flex items-center justify-between p-3 bg-card rounded-lg border shadow-sm"
                   >
                     <div className="flex-1">
                       <div className="flex items-center gap-2">
                         <p className="font-medium">€{Number(expense.amount).toFixed(2)}</p>
-                        <span className="px-2 py-0.5 bg-muted rounded text-xs">
+                        <span className="px-2 py-0.5 bg-muted rounded text-xs text-muted-foreground">
                           {expense.category}
                         </span>
                         {expense.is_recurring && (
-                          <span className="px-2 py-0.5 bg-primary/10 text-primary rounded text-xs">
+                          <span className="px-2 py-0.5 bg-accent/10 text-accent-foreground rounded text-xs">
                             Ricorrente
                           </span>
                         )}
@@ -495,7 +495,7 @@ const Expenses = () => {
                         size="icon"
                         onClick={() => openEditExpense(expense)}
                       >
-                        <Pencil className="w-4 h-4 text-primary" />
+                        <Pencil className="w-4 h-4 text-muted-foreground" />
                       </Button>
                       <Button
                         variant="ghost"
