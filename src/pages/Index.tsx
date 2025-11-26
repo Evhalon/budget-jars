@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { StatCard } from "@/components/StatCard";
 import { AISuggestions } from "@/components/AISuggestions";
-import { TrendingUp, TrendingDown, Wallet, PiggyBank, LogOut, Plus, Receipt, Target, TrendingUpIcon, Calculator } from "lucide-react";
+import { TrendingUp, TrendingDown, Wallet, PiggyBank, LogOut, Plus, Receipt, Target, TrendingUpIcon, Calculator, Smartphone } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Session } from "@supabase/supabase-js";
 
@@ -205,6 +205,21 @@ const Index = () => {
             </div>
           </Link>
         </div>
+
+        {/* Install App Banner */}
+        <Link to="/install">
+          <div className="p-6 rounded-lg border border-primary/30 shadow-sm hover:shadow-md transition-all bg-gradient-to-r from-cyan-500/10 to-blue-500/10">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-xl font-semibold mb-1 flex items-center gap-2">
+                  <Smartphone className="w-6 h-6" />
+                  Installa l'App
+                </h3>
+                <p className="text-sm text-muted-foreground">Aggiungi Budget Manager alla tua schermata home per un accesso rapido</p>
+              </div>
+            </div>
+          </div>
+        </Link>
 
         {/* Statistics Link */}
         <Link to="/statistics">
