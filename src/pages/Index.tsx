@@ -2,10 +2,7 @@ import { useEffect, useState, useLayoutEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { StatCard } from "@/components/StatCard";
-import { AISuggestions } from "@/components/AISuggestions";
-import { TrendingUp, TrendingDown, Wallet, PiggyBank, LogOut, Plus, Download, BarChart3, ArrowRight } from "lucide-react";
+import { TrendingUp, TrendingDown, Wallet, PiggyBank, LogOut, Download, CreditCard, PieChart } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Session } from "@supabase/supabase-js";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -111,130 +108,170 @@ const Index = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container max-w-6xl mx-auto p-4 md:p-6 space-y-8">
-        {/* Header */}
-        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-          <div className="flex justify-between items-center md:order-2">
-            <ThemeToggle />
-            <Button variant="outline" size="icon" onClick={handleLogout}>
-              <LogOut className="w-4 h-4" />
-            </Button>
-          </div>
-          <div className="md:order-1">
-            <h1 className="text-3xl md:text-4xl font-bold text-foreground">
+    <div className="min-h-screen bg-background relative overflow-hidden selection:bg-primary/20">
+      {/* Ambient Background Effects */}
+      <div className="fixed inset-0 pointer-events-none">
+        <div className="absolute top-[-20%] left-[-10%] w-[60%] h-[60%] bg-primary/10 rounded-full blur-[120px] animate-pulse-slow" />
+        <div className="absolute bottom-[-20%] right-[-10%] w-[60%] h-[60%] bg-accent/10 rounded-full blur-[120px] animate-pulse-slow" style={{ animationDelay: '1.5s' }} />
+      </div>
+
+      <div className="container max-w-7xl mx-auto p-4 md:p-8 space-y-8 relative z-10">
+        {/* Header Section */}
+        <header className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6">
+          <div className="space-y-1">
+            <h1 className="text-4xl md:text-5xl font-bold tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
               {t('appName')}
             </h1>
-            <p className="text-muted-foreground mt-1">{t('welcomeMessage')}</p>
+            <p className="text-muted-foreground text-lg font-light">{t('welcomeMessage')}</p>
           </div>
-        </div>
+          <div className="flex items-center gap-3 bg-card/50 backdrop-blur-sm p-2 rounded-full border border-border/50 shadow-sm">
+            <ThemeToggle />
+            <Button variant="ghost" size="icon" onClick={handleLogout} className="rounded-full hover:bg-destructive/10 hover:text-destructive transition-colors">
+              <LogOut className="w-5 h-5" />
+            </Button>
+          </div>
+        </header>
 
-        {/* Stats Grid */}
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          <StatCard
-            title={t('totalIncome')}
-            value={`€${stats.totalIncome.toFixed(2)} `}
-            icon={TrendingUp}
-            variant="success"
-            trend={t('thisMonth')}
-          />
-          <StatCard
-            title={t('totalExpenses')}
-            value={`€${stats.totalExpenses.toFixed(2)} `}
-            icon={TrendingDown}
-            variant="destructive"
-            trend={t('thisMonth')}
-          />
-          <StatCard
-            title={t('availableBalance')}
-            value={`€${stats.balance.toFixed(2)} `}
-            icon={Wallet}
-            variant="default"
-            trend={t('available')}
-          />
-          <StatCard
-            title={t('savings')}
-            value={`€${stats.totalSavings.toFixed(2)} `}
-            icon={PiggyBank}
-            variant="default"
-            trend={t('inGoals')}
-          />
-        </div>
+        {/* Bento Grid Layout */}
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
 
-        {/* Quick Actions */}
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 pt-4">
-          <Link to="/expenses" className="block">
-            <div className="p-6 text-center space-y-4 cursor-pointer h-full rounded-lg border border-border/50 shadow-sm hover:shadow-md hover:border-primary/30 transition-all">
-              <div className="p-4 bg-red-500/10 rounded-full inline-block">
-                <TrendingDown className="w-8 h-8 text-red-500" />
+          {/* Main Balance Card - Takes prominent space */}
+          <div className="md:col-span-8 lg:col-span-6 relative group">
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-accent/20 rounded-[2rem] blur-xl opacity-50 group-hover:opacity-75 transition-all duration-500" />
+            <div className="relative h-full bg-card/80 backdrop-blur-xl border border-white/10 dark:border-white/5 p-8 rounded-[2rem] shadow-2xl flex flex-col justify-between overflow-hidden hover:scale-[1.02] transition-transform duration-500">
+              <div className="absolute top-0 right-0 p-8 opacity-[0.03] dark:opacity-[0.05] pointer-events-none">
+                <Wallet className="w-48 h-48" />
               </div>
-              <div>
-                <h3 className="font-semibold text-lg">{t('manageExpenses')}</h3>
-                <p className="text-sm text-muted-foreground">{t('trackIncomeExpenses')}</p>
+
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <div className="p-2 bg-primary/10 rounded-full">
+                    <Wallet className="w-4 h-4 text-primary" />
+                  </div>
+                  <span className="font-medium">{t('availableBalance')}</span>
+                </div>
+                <h2 className="text-5xl md:text-6xl font-bold tracking-tighter text-foreground">
+                  €{stats.balance.toFixed(2)}
+                </h2>
+              </div>
+
+              <div className="mt-8 flex flex-wrap gap-3">
+                <div className="flex items-center gap-2 text-emerald-500 bg-emerald-500/10 px-4 py-2 rounded-full border border-emerald-500/20">
+                  <TrendingUp className="w-4 h-4" />
+                  <span className="font-semibold text-sm">Active</span>
+                </div>
+                <div className="flex items-center gap-2 text-muted-foreground bg-secondary/50 px-4 py-2 rounded-full border border-border/50">
+                  <span className="text-sm">Updated just now</span>
+                </div>
               </div>
             </div>
-          </Link>
+          </div>
 
-          <Link to="/jars" className="block">
-            <div className="p-6 text-center space-y-4 cursor-pointer h-full rounded-lg border border-border/50 shadow-sm hover:shadow-md hover:border-primary/30 transition-all">
-              <div className="p-4 bg-primary/10 rounded-full inline-block">
-                <PiggyBank className="w-8 h-8 text-primary" />
+          {/* Quick Stats Column */}
+          <div className="md:col-span-4 lg:col-span-3 flex flex-col gap-6">
+            {/* Income Card */}
+            <div className="flex-1 bg-card/50 backdrop-blur-md border border-border/50 p-6 rounded-[2rem] hover:bg-card/80 transition-all duration-300 group hover:shadow-lg hover:-translate-y-1">
+              <div className="flex justify-between items-start mb-4">
+                <div className="p-3 bg-emerald-500/10 rounded-2xl text-emerald-500 group-hover:scale-110 transition-transform duration-300">
+                  <TrendingUp className="w-6 h-6" />
+                </div>
               </div>
+              <p className="text-muted-foreground text-sm font-medium">{t('totalIncome')}</p>
+              <p className="text-2xl font-bold mt-1 text-foreground">€{stats.totalIncome.toFixed(2)}</p>
+            </div>
+
+            {/* Expenses Card */}
+            <div className="flex-1 bg-card/50 backdrop-blur-md border border-border/50 p-6 rounded-[2rem] hover:bg-card/80 transition-all duration-300 group hover:shadow-lg hover:-translate-y-1">
+              <div className="flex justify-between items-start mb-4">
+                <div className="p-3 bg-rose-500/10 rounded-2xl text-rose-500 group-hover:scale-110 transition-transform duration-300">
+                  <TrendingDown className="w-6 h-6" />
+                </div>
+              </div>
+              <p className="text-muted-foreground text-sm font-medium">{t('totalExpenses')}</p>
+              <p className="text-2xl font-bold mt-1 text-foreground">€{stats.totalExpenses.toFixed(2)}</p>
+            </div>
+          </div>
+
+          {/* Savings / Jars Preview */}
+          <div className="md:col-span-12 lg:col-span-3">
+            <div className="h-full bg-gradient-to-br from-indigo-500/5 to-purple-500/5 backdrop-blur-md border border-indigo-500/10 p-6 rounded-[2rem] flex flex-col justify-between group hover:border-indigo-500/30 transition-all duration-300 hover:shadow-lg">
               <div>
-                <h3 className="font-semibold text-lg">{t('savingsGoals')}</h3>
-                <p className="text-sm text-muted-foreground">{t('yourFinancialJars')}</p>
+                <div className="flex items-center justify-between mb-6">
+                  <div className="p-3 bg-indigo-500/10 rounded-2xl text-indigo-500 group-hover:rotate-12 transition-transform duration-300">
+                    <PiggyBank className="w-6 h-6" />
+                  </div>
+                  <Link to="/jars" className="text-xs font-medium text-indigo-500 hover:text-indigo-600 bg-indigo-500/10 px-3 py-1 rounded-full transition-colors">
+                    View All
+                  </Link>
+                </div>
+                <p className="text-muted-foreground text-sm font-medium">{t('savings')}</p>
+                <p className="text-3xl font-bold mt-1 text-foreground">€{stats.totalSavings.toFixed(2)}</p>
+              </div>
+
+              <div className="mt-6 space-y-2">
+                <div className="flex justify-between text-xs text-muted-foreground">
+                  <span>Progress</span>
+                  <span>Active</span>
+                </div>
+                <div className="h-2 w-full bg-indigo-200/20 rounded-full overflow-hidden">
+                  <div className="h-full bg-indigo-500 w-full animate-pulse" />
+                </div>
               </div>
             </div>
-          </Link>
+          </div>
 
-          <Link to="/budget" className="block">
-            <div className="p-6 text-center space-y-4 cursor-pointer h-full rounded-lg border border-border/50 shadow-sm hover:shadow-md hover:border-primary/30 transition-all">
-              <div className="p-4 bg-blue-500/10 rounded-full inline-block">
-                <Wallet className="w-8 h-8 text-blue-500" />
-              </div>
-              <div>
-                <h3 className="font-semibold text-lg">{t('budget')}</h3>
-                <p className="text-sm text-muted-foreground">{t('planIncomeExpenses')}</p>
-              </div>
-            </div>
-          </Link>
-
-          {!isInstalled && (
-            <Link to="/install" className="block">
-              <div className="p-6 text-center space-y-4 cursor-pointer h-full rounded-lg border border-border/50 shadow-sm hover:shadow-md hover:border-primary/30 transition-all">
-                <div className="p-4 bg-green-500/10 rounded-full inline-block">
-                  <Download className="w-8 h-8 text-green-500" />
+          {/* Action Grid */}
+          <div className="md:col-span-12 grid grid-cols-2 md:grid-cols-4 gap-4 mt-2">
+            <Link to="/expenses" className="group">
+              <div className="h-full bg-card/50 hover:bg-card border border-border/50 hover:border-primary/20 p-6 rounded-[2rem] transition-all duration-300 flex flex-col items-center justify-center text-center gap-4 hover:shadow-xl hover:-translate-y-1">
+                <div className="p-4 bg-background rounded-2xl shadow-sm group-hover:scale-110 group-hover:bg-primary/10 group-hover:text-primary transition-all duration-300">
+                  <CreditCard className="w-8 h-8 text-muted-foreground group-hover:text-primary transition-colors" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-lg">{t('install')}</h3>
-                  <p className="text-sm text-muted-foreground">{t('installAppDesc')}</p>
+                  <h3 className="font-semibold text-foreground">{t('manageExpenses')}</h3>
+                  <p className="text-xs text-muted-foreground mt-1 opacity-60 group-hover:opacity-100 transition-opacity">{t('trackIncomeExpenses')}</p>
                 </div>
               </div>
             </Link>
-          )}
-        </div>
 
-        {/* AI Suggestions */}
-        <AISuggestions userId={session.user.id} />
+            <Link to="/budget" className="group">
+              <div className="h-full bg-card/50 hover:bg-card border border-border/50 hover:border-blue-500/20 p-6 rounded-[2rem] transition-all duration-300 flex flex-col items-center justify-center text-center gap-4 hover:shadow-xl hover:-translate-y-1">
+                <div className="p-4 bg-background rounded-2xl shadow-sm group-hover:scale-110 group-hover:bg-blue-500/10 group-hover:text-blue-500 transition-all duration-300">
+                  <Wallet className="w-8 h-8 text-muted-foreground group-hover:text-blue-500 transition-colors" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-foreground">{t('budget')}</h3>
+                  <p className="text-xs text-muted-foreground mt-1 opacity-60 group-hover:opacity-100 transition-opacity">{t('planIncomeExpenses')}</p>
+                </div>
+              </div>
+            </Link>
 
-        {/* Statistics Link */}
-        <div className="pt-8 pb-4">
-          <Link to="/statistics" className="block">
-            <div className="p-6 rounded-lg border border-border/50 shadow-sm hover:shadow-md hover:border-primary/30 transition-all bg-card">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <div className="p-3 bg-purple-500/10 rounded-full">
-                    <BarChart3 className="w-6 h-6 text-purple-500" />
+            <Link to="/statistics" className="group">
+              <div className="h-full bg-card/50 hover:bg-card border border-border/50 hover:border-purple-500/20 p-6 rounded-[2rem] transition-all duration-300 flex flex-col items-center justify-center text-center gap-4 hover:shadow-xl hover:-translate-y-1">
+                <div className="p-4 bg-background rounded-2xl shadow-sm group-hover:scale-110 group-hover:bg-purple-500/10 group-hover:text-purple-500 transition-all duration-300">
+                  <PieChart className="w-8 h-8 text-muted-foreground group-hover:text-purple-500 transition-colors" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-foreground">{t('viewStatistics')}</h3>
+                  <p className="text-xs text-muted-foreground mt-1 opacity-60 group-hover:opacity-100 transition-opacity">Analyze trends</p>
+                </div>
+              </div>
+            </Link>
+
+            {!isInstalled && (
+              <Link to="/install" className="group">
+                <div className="h-full bg-card/50 hover:bg-card border border-border/50 hover:border-green-500/20 p-6 rounded-[2rem] transition-all duration-300 flex flex-col items-center justify-center text-center gap-4 hover:shadow-xl hover:-translate-y-1">
+                  <div className="p-4 bg-background rounded-2xl shadow-sm group-hover:scale-110 group-hover:bg-green-500/10 group-hover:text-green-500 transition-all duration-300">
+                    <Download className="w-8 h-8 text-muted-foreground group-hover:text-green-500 transition-colors" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-lg">{t('viewStatistics')}</h3>
-                    <p className="text-sm text-muted-foreground">{t('viewStatistics')}</p>
+                    <h3 className="font-semibold text-foreground">{t('install')}</h3>
+                    <p className="text-xs text-muted-foreground mt-1 opacity-60 group-hover:opacity-100 transition-opacity">{t('installAppDesc')}</p>
                   </div>
                 </div>
-                <ArrowRight className="w-5 h-5 text-muted-foreground" />
-              </div>
-            </div>
-          </Link>
+              </Link>
+            )}
+          </div>
         </div>
       </div>
     </div>
