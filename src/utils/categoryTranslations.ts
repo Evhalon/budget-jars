@@ -23,7 +23,6 @@ export const categoryTranslations: { [key: string]: string } = {
     // Common income categories
     "Stipendio": "Salary",
     "Freelance": "Freelance",
-    "Investimenti": "Investments",
     "Bonus": "Bonus",
     "Regalo": "Gift",
     "Vendita": "Sale",
