@@ -2,7 +2,7 @@ import { useEffect, useState, useLayoutEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { TrendingUp, TrendingDown, Wallet, PiggyBank, LogOut, Download, CreditCard, PieChart } from "lucide-react";
+import { TrendingUp, TrendingDown, Wallet, PiggyBank, LogOut, Download, CreditCard, PieChart, User } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Session } from "@supabase/supabase-js";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -126,6 +126,11 @@ const Index = () => {
           </div>
           <div className="flex items-center gap-3 bg-card/50 backdrop-blur-sm p-2 rounded-full border border-border/50 shadow-sm">
             <ThemeToggle />
+            <Link to="/profile">
+              <Button variant="ghost" size="icon" className="rounded-full hover:bg-primary/10 hover:text-primary transition-colors">
+                <User className="w-5 h-5" />
+              </Button>
+            </Link>
             <Button variant="ghost" size="icon" onClick={handleLogout} className="rounded-full hover:bg-destructive/10 hover:text-destructive transition-colors">
               <LogOut className="w-5 h-5" />
             </Button>

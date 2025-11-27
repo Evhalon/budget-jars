@@ -13,6 +13,7 @@ import Budget from "./pages/Budget";
 import Statistics from "./pages/Statistics";
 import Install from "./pages/Install";
 import NotFound from "./pages/NotFound";
+import Profile from "./pages/Profile";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -41,6 +42,7 @@ const App = () => (
               <Route path="/budget" element={<Budget />} />
               <Route path="/statistics" element={<Statistics />} />
               <Route path="/install" element={<Install />} />
+              <Route path="/profile" element={<Profile />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
