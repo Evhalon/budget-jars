@@ -57,6 +57,9 @@ const Index = () => {
       };
     },
     enabled: !!session?.user,
+    staleTime: 0,
+    refetchOnMount: 'always',
+    refetchOnWindowFocus: true,
   });
 
   // Check if app is installed

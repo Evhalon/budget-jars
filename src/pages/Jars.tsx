@@ -13,6 +13,7 @@ import { Session } from "@supabase/supabase-js";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Pencil } from "lucide-react";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface Jar {
   id: string;
@@ -24,6 +25,7 @@ interface Jar {
 
 const Jars = () => {
   const { t } = useLanguage();
+  const queryClient = useQueryClient();
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const [jars, setJars] = useState<Jar[]>([]);
@@ -99,6 +101,7 @@ const Jars = () => {
         title: "Obiettivo creato!",
         description: "Il tuo jar è stato creato con successo.",
       });
+      queryClient.invalidateQueries({ queryKey: ['dashboardStats'] });
       setIsCreateDialogOpen(false);
       fetchJars();
     }
@@ -118,6 +121,7 @@ const Jars = () => {
       toast({ variant: "destructive", title: t('error'), description: error.message });
     } else {
       toast({ title: t('saved'), description: t('success') });
+      queryClient.invalidateQueries({ queryKey: ['dashboardStats'] });
       setIsCreateDialogOpen(false);
       setEditingJar(null);
       fetchJars();
@@ -156,6 +160,7 @@ const Jars = () => {
           title: "Deposito effettuato!",
           description: `Hai aggiunto €${depositAmount.toFixed(2)} al tuo obiettivo.`,
         });
+        queryClient.invalidateQueries({ queryKey: ['dashboardStats'] });
         setIsDepositDialogOpen(false);
         setSelectedJar(null);
         fetchJars();
@@ -177,6 +182,7 @@ const Jars = () => {
         title: "Obiettivo eliminato",
         description: "Il jar è stato rimosso.",
       });
+      queryClient.invalidateQueries({ queryKey: ['dashboardStats'] });
       fetchJars();
     }
   };

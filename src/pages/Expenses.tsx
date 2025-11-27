@@ -14,6 +14,7 @@ import { Session } from "@supabase/supabase-js";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Pencil } from "lucide-react";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface Expense {
   id: string;
@@ -43,6 +44,7 @@ const categories = [
 
 const Expenses = () => {
   const { t } = useLanguage();
+  const queryClient = useQueryClient();
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const [expenses, setExpenses] = useState<Expense[]>([]);
@@ -137,6 +139,7 @@ const Expenses = () => {
         title: "Spesa aggiunta!",
         description: "La spesa è stata salvata con successo.",
       });
+      queryClient.invalidateQueries({ queryKey: ['dashboardStats'] });
       setIsExpenseDialogOpen(false);
       fetchExpenses();
     }
@@ -159,6 +162,7 @@ const Expenses = () => {
       toast({ variant: "destructive", title: t('error'), description: error.message });
     } else {
       toast({ title: t('saved'), description: t('success') });
+      queryClient.invalidateQueries({ queryKey: ['dashboardStats'] });
       setIsExpenseDialogOpen(false);
       setEditingExpense(null);
       fetchExpenses();
@@ -180,6 +184,7 @@ const Expenses = () => {
       toast({ variant: "destructive", title: t('error'), description: error.message });
     } else {
       toast({ title: t('saved'), description: t('success') });
+      queryClient.invalidateQueries({ queryKey: ['dashboardStats'] });
       setIsIncomeDialogOpen(false);
       setEditingIncome(null);
       fetchIncomes();
@@ -209,6 +214,7 @@ const Expenses = () => {
         title: "Entrata aggiunta!",
         description: "L'entrata è stata salvata con successo.",
       });
+      queryClient.invalidateQueries({ queryKey: ['dashboardStats'] });
       setIsIncomeDialogOpen(false);
       fetchIncomes();
     }
@@ -238,6 +244,7 @@ const Expenses = () => {
         title: "Spesa eliminata",
         description: "La spesa è stata rimossa.",
       });
+      queryClient.invalidateQueries({ queryKey: ['dashboardStats'] });
       fetchExpenses();
     }
   };
@@ -256,6 +263,7 @@ const Expenses = () => {
         title: "Entrata eliminata",
         description: "L'entrata è stata rimossa.",
       });
+      queryClient.invalidateQueries({ queryKey: ['dashboardStats'] });
       fetchIncomes();
     }
   };
