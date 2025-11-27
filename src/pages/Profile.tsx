@@ -118,32 +118,17 @@ const Profile = () => {
         if (confirm("Are you sure you want to delete your account? This action cannot be undone.")) {
             try {
                 setLoading(true);
-                // Note: Client-side deletion often requires specific RLS policies or an RPC function.
-                // We will try the standard method, but if it fails, we'll sign out.
-                const { error } = await supabase.rpc('delete_user');
-
-                if (error) {
-                    // Fallback if RPC doesn't exist
-                    console.error("Delete RPC failed, trying signout", error);
-                    await supabase.auth.signOut();
-                    navigate("/auth");
-                    toast({
-                        title: "Account deletion request",
-                        description: "Please contact support to fully delete your data.",
-                    });
-                    return;
-                }
-
+                // Sign out user and inform them to contact support for full deletion
                 await supabase.auth.signOut();
                 navigate("/auth");
                 toast({
-                    title: "Account deleted",
-                    description: "Your account has been successfully deleted.",
+                    title: "Account deletion request",
+                    description: "Please contact support to fully delete your data.",
                 });
             } catch (error: any) {
                 toast({
                     variant: "destructive",
-                    title: "Error deleting account",
+                    title: "Error",
                     description: error.message,
                 });
             } finally {
