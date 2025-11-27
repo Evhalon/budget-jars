@@ -10,6 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Pencil } from "lucide-react";
+import { getBudgetExpenseCategories, getBudgetIncomeCategories, getFrequencies } from "@/utils/categoryUtils";
 
 interface BudgetItem {
   id: string;
@@ -22,35 +23,11 @@ interface BudgetItem {
   annual_amount: number;
 }
 
-const EXPENSE_CATEGORIES = [
-  "Casa e Servizi",
-  "Servizi Finanziari",
-  "Alimentari e Personali",
-  "Svago",
-  "Trasporti",
-  "Figli",
-  "Altro"
-];
-
-const INCOME_CATEGORIES = [
-  "Stipendio/Pensione",
-  "Redditi Familiari",
-  "Investimenti Finanziari",
-  "Investimenti Immobiliari",
-  "Altro"
-];
-
-const FREQUENCIES = [
-  { value: "weekly", label: "Settimanale", multiplier: 52 },
-  { value: "monthly", label: "Mensile", multiplier: 12 },
-  { value: "bimonthly", label: "Bimestrale", multiplier: 6 },
-  { value: "quarterly", label: "Trimestrale", multiplier: 4 },
-  { value: "semiannual", label: "Semestrale", multiplier: 2 },
-  { value: "annual", label: "Annuale", multiplier: 1 }
-];
-
 export default function Budget() {
   const { t } = useLanguage();
+  const EXPENSE_CATEGORIES = getBudgetExpenseCategories(t);
+  const INCOME_CATEGORIES = getBudgetIncomeCategories(t);
+  const FREQUENCIES = getFrequencies(t);
   const navigate = useNavigate();
   const [items, setItems] = useState<BudgetItem[]>([]);
   const [userId, setUserId] = useState<string>("");

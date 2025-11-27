@@ -15,6 +15,7 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Pencil } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
+import { getExpenseCategories } from "@/utils/categoryUtils";
 
 interface Expense {
   id: string;
@@ -32,18 +33,9 @@ interface Income {
   date: string;
 }
 
-const categories = [
-  "Affitto",
-  "Bollette",
-  "Spesa",
-  "Trasporti",
-  "Salute",
-  "Svago",
-  "Altro",
-];
-
 const Expenses = () => {
   const { t } = useLanguage();
+  const categories = getExpenseCategories(t);
   const queryClient = useQueryClient();
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
