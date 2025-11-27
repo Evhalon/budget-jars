@@ -122,12 +122,12 @@ const Index = () => {
         {/* Header Section */}
         <header className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6">
           <div className="space-y-1">
-            <h1 className="text-4xl md:text-5xl font-bold tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+            <h1 className="text-4xl md:text-5xl font-bold tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent break-words">
               {t('appName')}
             </h1>
             <p className="text-muted-foreground text-lg font-light">{t('welcomeMessage')}</p>
           </div>
-          <div className="flex items-center gap-3 bg-card/50 backdrop-blur-sm p-2 rounded-full border border-border/50 shadow-sm">
+          <div className="flex items-center gap-3 bg-card/50 backdrop-blur-sm p-2 rounded-full border border-border/50 shadow-sm self-end md:self-auto">
             <ThemeToggle />
             <Link to="/profile">
               <Button variant="ghost" size="icon" className="rounded-full hover:bg-primary/10 hover:text-primary transition-colors">

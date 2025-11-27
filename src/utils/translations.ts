@@ -3,7 +3,7 @@ export type Language = 'it' | 'en';
 export const translations = {
     it: {
         // General
-        appName: "Budget Manager",
+        appName: "PiggyPal",
         dashboard: "Dashboard",
         expenses: "Spese",
         jars: "Jars",
@@ -151,7 +151,7 @@ export const translations = {
     },
     en: {
         // General
-        appName: "Budget Manager",
+        appName: "PiggyPal",
         dashboard: "Dashboard",
         expenses: "Expenses",
         jars: "Jars",

@@ -17,8 +17,8 @@ export default defineConfig(({ mode }) => ({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.ico', 'robots.txt'],
       manifest: {
-        name: 'Budget Manager - Gestione Budget Personale',
-        short_name: 'Budget Manager',
+        name: 'PiggyPal - Gestione Budget Personale',
+        short_name: 'PiggyPal',
         description: 'App completa per gestire il tuo budget personale, tracciare spese e raggiungere obiettivi di risparmio',
         theme_color: '#ffffff',
         background_color: '#ffffff',
