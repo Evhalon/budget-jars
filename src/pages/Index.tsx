@@ -121,8 +121,8 @@ const Index = () => {
       <div className="container max-w-7xl mx-auto p-4 md:p-8 space-y-8 relative z-10">
         {/* Header Section */}
         <header className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6">
-          <div className="space-y-1">
-            <h1 className="text-4xl md:text-5xl font-bold tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent break-words">
+          <div>
+            <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-foreground">
               {t('appName')}
             </h1>
           </div>
