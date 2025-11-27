@@ -3,7 +3,7 @@ export type Language = 'it' | 'en';
 export const translations = {
     it: {
         // General
-        appName: "PiggyPal",
+        appName: "BrokeMe",
         dashboard: "Dashboard",
         expenses: "Spese",
         jars: "Jars",
@@ -90,7 +90,7 @@ export const translations = {
         enjoyApp: "Goditi l'app dalla tua schermata home.",
         iOS: "iOS",
         Android: "Android",
-        installBudgetManager: "Installa PiggyPal",
+        installBudgetManager: "Installa BrokeMe",
         installAppOnDevice: "Installa l'app sul tuo dispositivo per un accesso rapido e un'esperienza migliore",
         installNow: "Installa Ora",
         toInstallThisApp: "Per installare questa app:",
@@ -121,7 +121,7 @@ export const translations = {
         savingsGoals: "Obiettivi di Risparmio",
         yourFinancialJars: "I tuoi jars finanziari",
         planIncomeExpenses: "Pianifica entrate e uscite",
-        installAppDescription: "Aggiungi PiggyPal alla tua schermata home per un accesso rapido",
+        installAppDescription: "Aggiungi BrokeMe alla tua schermata home per un accesso rapido",
         available: "Disponibile",
         inGoals: "Negli obiettivi",
         availableBalance: "Saldo Disponibile",
@@ -174,7 +174,7 @@ export const translations = {
     },
     en: {
         // General
-        appName: "PiggyPal",
+        appName: "BrokeMe",
         dashboard: "Dashboard",
         expenses: "Expenses",
         jars: "Jars",
@@ -261,7 +261,7 @@ export const translations = {
         enjoyApp: "Enjoy the app from your home screen.",
         iOS: "iOS",
         Android: "Android",
-        installBudgetManager: "Install PiggyPal",
+        installBudgetManager: "Install BrokeMe",
         installAppOnDevice: "Install the app on your device for quick access and a better experience",
         installNow: "Install Now",
         toInstallThisApp: "To install this app:",
@@ -292,7 +292,7 @@ export const translations = {
         savingsGoals: "Savings Goals",
         yourFinancialJars: "Your financial jars",
         planIncomeExpenses: "Plan income and expenses",
-        installAppDescription: "Add PiggyPal to your home screen for quick access",
+        installAppDescription: "Add BrokeMe to your home screen for quick access",
         available: "Available",
         inGoals: "In goals",
         availableBalance: "Available Balance",
