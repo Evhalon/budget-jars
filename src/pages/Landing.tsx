@@ -380,7 +380,7 @@ const Landing = () => {
                         {/* Free */}
                         <div className="p-8 rounded-3xl bg-card border border-border/50 hover:border-border transition-colors">
                             <h3 className="text-xl font-bold mb-2">{t('landingPricingFree')}</h3>
-                            <div className="text-4xl font-bold mb-6">€0<span className="text-lg text-muted-foreground font-normal">/mo</span></div>
+                            <div className="text-4xl font-bold mb-6">Free<span className="text-lg text-muted-foreground font-normal">/forever</span></div>
                             <ul className="space-y-3 mb-8 text-sm text-muted-foreground">
                                 <li className="flex items-center gap-2"><Check className="w-4 h-4 text-primary" /> 50 transactions/mo</li>
                                 <li className="flex items-center gap-2"><Check className="w-4 h-4 text-primary" /> Basic analytics</li>
@@ -397,7 +397,7 @@ const Landing = () => {
                                 Most Popular
                             </div>
                             <h3 className="text-xl font-bold mb-2">{t('landingPricingPremium')}</h3>
-                            <div className="text-4xl font-bold mb-6">€4.99<span className="text-lg text-muted-foreground font-normal">/mo</span></div>
+                            <div className="text-4xl font-bold mb-6">Pro<span className="text-lg text-muted-foreground font-normal">/plan</span></div>
                             <ul className="space-y-3 mb-8 text-sm text-muted-foreground">
                                 <li className="flex items-center gap-2"><Check className="w-4 h-4 text-primary" /> Unlimited transactions</li>
                                 <li className="flex items-center gap-2"><Check className="w-4 h-4 text-primary" /> Advanced analytics</li>
@@ -412,7 +412,7 @@ const Landing = () => {
                         {/* Lifetime */}
                         <div className="p-8 rounded-3xl bg-card border border-border/50 hover:border-border transition-colors">
                             <h3 className="text-xl font-bold mb-2">{t('landingPricingLifetime')}</h3>
-                            <div className="text-4xl font-bold mb-6">€99<span className="text-lg text-muted-foreground font-normal">/once</span></div>
+                            <div className="text-4xl font-bold mb-6">Lifetime<span className="text-lg text-muted-foreground font-normal">/access</span></div>
                             <ul className="space-y-3 mb-8 text-sm text-muted-foreground">
                                 <li className="flex items-center gap-2"><Check className="w-4 h-4 text-primary" /> All Premium features</li>
                                 <li className="flex items-center gap-2"><Check className="w-4 h-4 text-primary" /> Lifetime access</li>
