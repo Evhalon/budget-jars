@@ -13,8 +13,10 @@ import {
     Sparkles,
     Menu,
     X,
-    Globe
+    Globe,
+    ChevronDown
 } from "lucide-react";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useState } from "react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
@@ -41,10 +43,23 @@ const Landing = () => {
 
                     {/* Desktop Nav */}
                     <div className="hidden md:flex items-center gap-6">
-                        <Button variant="ghost" size="sm" onClick={toggleLanguage} className="gap-2">
-                            <Globe className="w-4 h-4" />
-                            {language === 'it' ? 'EN' : 'IT'}
-                        </Button>
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" size="sm" className="gap-2">
+                                    <Globe className="w-4 h-4" />
+                                    {language === 'it' ? 'IT' : 'EN'}
+                                    <ChevronDown className="w-3 h-3 opacity-50" />
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                                <DropdownMenuItem onClick={() => setLanguage('it')} className="gap-2">
+                                    <span className={language === 'it' ? 'font-bold' : ''}>🇮🇹 Italiano</span>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => setLanguage('en')} className="gap-2">
+                                    <span className={language === 'en' ? 'font-bold' : ''}>🇬🇧 English</span>
+                                </DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
                         <ThemeToggle />
                         <Link to="/auth?mode=login">
                             <Button variant="ghost">{t('login')}</Button>
@@ -68,10 +83,14 @@ const Landing = () => {
                 {/* Mobile Nav */}
                 {mobileMenuOpen && (
                     <div className="md:hidden absolute top-16 left-0 w-full bg-background border-b border-border/50 p-4 flex flex-col gap-4 animate-in slide-in-from-top-5">
-                        <Button variant="ghost" onClick={toggleLanguage} className="justify-start gap-2">
-                            <Globe className="w-4 h-4" />
-                            {language === 'it' ? 'Switch to English' : 'Passa all\'Italiano'}
-                        </Button>
+                        <div className="flex flex-col gap-2">
+                            <Button variant={language === 'it' ? 'default' : 'ghost'} onClick={() => setLanguage('it')} className="justify-start gap-2">
+                                🇮🇹 Italiano
+                            </Button>
+                            <Button variant={language === 'en' ? 'default' : 'ghost'} onClick={() => setLanguage('en')} className="justify-start gap-2">
+                                🇬🇧 English
+                            </Button>
+                        </div>
                         <Link to="/auth?mode=login" onClick={() => setMobileMenuOpen(false)}>
                             <Button variant="ghost" className="w-full justify-start">{t('login')}</Button>
                         </Link>
@@ -120,11 +139,11 @@ const Landing = () => {
                     {/* Hero Image / Mockup */}
                     <div className="mt-20 relative max-w-5xl mx-auto animate-in fade-in slide-in-from-bottom-12 duration-1000 delay-300">
                         <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent z-10 h-full w-full pointer-events-none" />
-                        <div className="rounded-xl border border-border/50 shadow-2xl overflow-hidden bg-card/50 backdrop-blur-sm ring-1 ring-white/10">
+                        <div className="rounded-xl border border-border/50 shadow-2xl overflow-hidden bg-card/50 backdrop-blur-sm ring-1 ring-white/10 p-4">
                             <img
                                 src="/hero-dashboard-real.png"
                                 alt="BrokeMe Dashboard"
-                                className="w-full h-auto object-cover"
+                                className="w-full h-auto object-cover rounded-lg"
                                 onError={(e) => {
                                     // Fallback if image fails
                                     e.currentTarget.style.display = 'none';
@@ -363,64 +382,6 @@ const Landing = () => {
                                     <img src="/mobile-jars-real.png" alt="Jars" className="w-full h-auto object-cover" />
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            {/* Pricing */}
-            <section className="py-24">
-                <div className="container mx-auto px-4 md:px-6">
-                    <div className="text-center mb-16">
-                        <h2 className="text-3xl md:text-5xl font-bold mb-6">Simple Pricing</h2>
-                        <p className="text-xl text-muted-foreground">Start for free, upgrade when you need more.</p>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-                        {/* Free */}
-                        <div className="p-8 rounded-3xl bg-card border border-border/50 hover:border-border transition-colors">
-                            <h3 className="text-xl font-bold mb-2">{t('landingPricingFree')}</h3>
-                            <div className="text-4xl font-bold mb-6">Free<span className="text-lg text-muted-foreground font-normal">/forever</span></div>
-                            <ul className="space-y-3 mb-8 text-sm text-muted-foreground">
-                                <li className="flex items-center gap-2"><Check className="w-4 h-4 text-primary" /> 50 transactions/mo</li>
-                                <li className="flex items-center gap-2"><Check className="w-4 h-4 text-primary" /> Basic analytics</li>
-                                <li className="flex items-center gap-2"><Check className="w-4 h-4 text-primary" /> 1 Savings Goal</li>
-                            </ul>
-                            <Link to="/auth?mode=register">
-                                <Button variant="outline" className="w-full rounded-full">Get Started</Button>
-                            </Link>
-                        </div>
-
-                        {/* Premium */}
-                        <div className="p-8 rounded-3xl bg-card border-2 border-primary relative shadow-2xl shadow-primary/10 transform scale-105 z-10">
-                            <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-primary text-white px-4 py-1 rounded-full text-sm font-medium">
-                                Most Popular
-                            </div>
-                            <h3 className="text-xl font-bold mb-2">{t('landingPricingPremium')}</h3>
-                            <div className="text-4xl font-bold mb-6">Pro<span className="text-lg text-muted-foreground font-normal">/plan</span></div>
-                            <ul className="space-y-3 mb-8 text-sm text-muted-foreground">
-                                <li className="flex items-center gap-2"><Check className="w-4 h-4 text-primary" /> Unlimited transactions</li>
-                                <li className="flex items-center gap-2"><Check className="w-4 h-4 text-primary" /> Advanced analytics</li>
-                                <li className="flex items-center gap-2"><Check className="w-4 h-4 text-primary" /> Unlimited Goals</li>
-                                <li className="flex items-center gap-2"><Check className="w-4 h-4 text-primary" /> AI Insights</li>
-                            </ul>
-                            <Link to="/auth?mode=register">
-                                <Button className="w-full rounded-full bg-primary hover:bg-primary/90">Start Free Trial</Button>
-                            </Link>
-                        </div>
-
-                        {/* Lifetime */}
-                        <div className="p-8 rounded-3xl bg-card border border-border/50 hover:border-border transition-colors">
-                            <h3 className="text-xl font-bold mb-2">{t('landingPricingLifetime')}</h3>
-                            <div className="text-4xl font-bold mb-6">Lifetime<span className="text-lg text-muted-foreground font-normal">/access</span></div>
-                            <ul className="space-y-3 mb-8 text-sm text-muted-foreground">
-                                <li className="flex items-center gap-2"><Check className="w-4 h-4 text-primary" /> All Premium features</li>
-                                <li className="flex items-center gap-2"><Check className="w-4 h-4 text-primary" /> Lifetime access</li>
-                                <li className="flex items-center gap-2"><Check className="w-4 h-4 text-primary" /> Priority support</li>
-                            </ul>
-                            <Link to="/auth?mode=register">
-                                <Button variant="outline" className="w-full rounded-full">Buy Once</Button>
-                            </Link>
                         </div>
                     </div>
                 </div>
