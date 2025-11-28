@@ -14,6 +14,7 @@ import Statistics from "./pages/Statistics";
 import Install from "./pages/Install";
 import NotFound from "./pages/NotFound";
 import Profile from "./pages/Profile";
+import Landing from "./pages/Landing";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -36,6 +37,7 @@ const App = () => (
           <BrowserRouter>
             <Routes>
               <Route path="/" element={<Index />} />
+              <Route path="/landing" element={<Landing />} />
               <Route path="/auth" element={<Auth />} />
               <Route path="/expenses" element={<Expenses />} />
               <Route path="/jars" element={<Jars />} />
