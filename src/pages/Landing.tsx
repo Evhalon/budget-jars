@@ -134,7 +134,7 @@ const Landing = () => {
                             />
                         </div>
                         {/* Floating Elements */}
-                        <div className="absolute -right-10 top-20 hidden md:block p-4 bg-card/80 backdrop-blur-md border border-border/50 rounded-2xl shadow-xl animate-float">
+                        <div className="absolute -right-4 top-10 hidden md:block p-4 bg-card/80 backdrop-blur-md border border-border/50 rounded-2xl shadow-xl animate-float z-20">
                             <div className="flex items-center gap-3">
                                 <div className="p-2 bg-green-500/20 rounded-lg text-green-500">
                                     <TrendingUp className="w-6 h-6" />
@@ -145,7 +145,7 @@ const Landing = () => {
                                 </div>
                             </div>
                         </div>
-                        <div className="absolute -left-10 bottom-40 hidden md:block p-4 bg-card/80 backdrop-blur-md border border-border/50 rounded-2xl shadow-xl animate-float" style={{ animationDelay: '2s' }}>
+                        <div className="absolute -left-4 bottom-20 hidden md:block p-4 bg-card/80 backdrop-blur-md border border-border/50 rounded-2xl shadow-xl animate-float z-20" style={{ animationDelay: '2s' }}>
                             <div className="flex items-center gap-3">
                                 <div className="p-2 bg-purple-500/20 rounded-lg text-purple-500">
                                     <PiggyBank className="w-6 h-6" />
@@ -155,8 +155,7 @@ const Landing = () => {
                                     <p className="text-lg font-bold">Vacation 🌴</p>
                                 </div>
                             </div>
-                        </div>
-                    </div>
+                        </div>                </div>
                 </div>
             </section>
 
