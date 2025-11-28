@@ -76,12 +76,14 @@ const Profile = () => {
 
             const file = event.target.files[0];
             const fileExt = file.name.split(".").pop();
-            const filePath = `${Math.random()}.${fileExt}`;
+            const filePath = `${user.id}/${Math.random()}.${fileExt}`;
 
             // Try to upload to 'avatars' bucket
             const { error: uploadError } = await supabase.storage
                 .from("avatars")
-                .upload(filePath, file);
+                .upload(filePath, file, {
+                    upsert: true
+                });
 
             if (uploadError) {
                 // If bucket doesn't exist or other error, fallback to just showing the local preview for this session
